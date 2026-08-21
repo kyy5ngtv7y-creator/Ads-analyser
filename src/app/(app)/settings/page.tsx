@@ -49,14 +49,14 @@ export default function SettingsPage() {
           return (
             <Card key={plan.id} className={`flex flex-col gap-4 p-6 ${highlight ? "border-accent/50" : ""}`}>
               <div className="flex items-baseline justify-between">
-                <span className={`text-sm font-bold tracking-wide ${highlight ? "text-accent" : "text-muted"}`}>
+                <span className={`text-sm font-bold tracking-wide ${highlight ? "text-accent-text" : "text-muted"}`}>
                   {plan.name.toUpperCase()}
                 </span>
                 <span className="font-display text-3xl font-bold">
                   {plan.priceChf}.–<span className="text-sm font-normal text-muted">/Monat</span>
                 </span>
               </div>
-              <ul className="flex flex-col gap-2 text-sm text-[#B9C1D2]">
+              <ul className="flex flex-col gap-2 text-sm text-soft">
                 {plan.features.map((f) => (
                   <li key={f}>· {f}</li>
                 ))}

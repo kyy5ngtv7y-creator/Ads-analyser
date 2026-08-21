@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { PLANS } from "@/lib/billing/plans";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function Check() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden className="shrink-0">
-      <path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3 8.5 6.5 12 13 4.5" style={{ stroke: "var(--win)" }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -16,8 +17,8 @@ export default function LandingPage() {
       <nav className="flex items-center justify-between border-b border-line py-5">
         <div className="flex items-center gap-2.5">
           <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden>
-            <rect x="1" y="1" width="24" height="24" rx="7" stroke="#C6F24E" strokeWidth="2" />
-            <path d="M7 16.5 L11 9 L14.5 14 L19 7.5" stroke="#C6F24E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="1" y="1" width="24" height="24" rx="7" style={{ stroke: "var(--accent-text)" }} strokeWidth="2" />
+            <path d="M7 16.5 L11 9 L14.5 14 L19 7.5" style={{ stroke: "var(--accent-text)" }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span className="font-display text-lg font-bold">Ads·Analyser</span>
         </div>
@@ -28,6 +29,7 @@ export default function LandingPage() {
           <a href="#preise" className="hidden text-[15px] font-medium text-muted hover:text-ink sm:block">
             Preise
           </a>
+          <ThemeToggle className="hidden lg:flex" />
           <Link
             href="/dashboard"
             className="rounded-lg bg-accent px-5 py-2.5 text-[15px] font-semibold text-accent-ink hover:opacity-90"
@@ -40,7 +42,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="flex flex-col items-start gap-10 py-16 lg:flex-row lg:items-center lg:gap-16 lg:py-24">
         <div className="flex flex-1 flex-col gap-6">
-          <span className="inline-flex w-fit items-center rounded-full border border-accent/40 px-3.5 py-1.5 text-[13px] font-semibold text-accent">
+          <span className="inline-flex w-fit items-center rounded-full border border-accent/40 px-3.5 py-1.5 text-[13px] font-semibold text-accent-text">
             Für Meta &amp; TikTok Ads
           </span>
           <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-[56px]" style={{ textWrap: "balance" }}>
@@ -60,28 +62,28 @@ export default function LandingPage() {
         </div>
 
         {/* Demo score card */}
-        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-surface p-7 shadow-[0_24px_80px_rgba(0,0,0,0.5)]">
+        <div className="w-full max-w-[420px] rounded-2xl border border-line bg-surface p-7 shadow-[var(--card-shadow)]">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-muted">summer-drop-video.mp4</span>
             <span className="rounded-full border border-line2 px-2.5 py-1 text-xs font-semibold text-muted">Meta · Cold · Sales</span>
           </div>
           <div className="flex justify-center py-3">
             <svg width="240" height="140" viewBox="0 0 240 140" aria-label="Winner-Score 78 Prozent">
-              <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" stroke="#1A1F2B" strokeWidth="16" strokeLinecap="round" />
-              <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" stroke="#4ADE80" strokeWidth="16" strokeLinecap="round" strokeDasharray="235 302" />
-              <text x="120" y="106" textAnchor="middle" fill="#EAEEF6" fontSize="44" fontWeight="700" fontFamily="var(--font-display)">
+              <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" style={{ stroke: "var(--surface2)" }} strokeWidth="16" strokeLinecap="round" />
+              <path d="M 24 128 A 96 96 0 0 1 216 128" fill="none" style={{ stroke: "var(--win)" }} strokeWidth="16" strokeLinecap="round" strokeDasharray="235 302" />
+              <text x="120" y="106" textAnchor="middle" style={{ fill: "var(--ink)" }} fontSize="44" fontWeight="700" fontFamily="var(--font-display)">
                 78%
               </text>
-              <text x="120" y="130" textAnchor="middle" fill="#4ADE80" fontSize="14" fontWeight="600">
+              <text x="120" y="130" textAnchor="middle" style={{ fill: "var(--win)" }} fontSize="14" fontWeight="600">
                 WINNER-SCORE
               </text>
             </svg>
           </div>
           <div className="flex flex-col gap-2.5">
             {[
-              ["Hook", 88, "#4ADE80"],
-              ["Botschaft", 74, "#C6F24E"],
-              ["CTA", 52, "#FBBF24"],
+              ["Hook", 88, "var(--win)"],
+              ["Botschaft", 74, "var(--solid)"],
+              ["CTA", 52, "var(--warn)"],
             ].map(([label, score, color]) => (
               <div key={label as string} className="flex items-center gap-3">
                 <span className="w-[100px] text-[13px] text-muted">{label}</span>
@@ -92,7 +94,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-lg border border-warn/25 bg-warn/10 p-3.5 text-[13px] leading-relaxed text-[#B9C1D2]">
+          <div className="mt-4 rounded-lg border border-warn/25 bg-warn/10 p-3.5 text-[13px] leading-relaxed text-soft">
             <strong className="text-warn">Fix #1:</strong> Dein CTA passt nicht zum Sales-Ziel — „Mehr erfahren“ bremst den Kauf.
             Nutze „Jetzt shoppen“ + Angebot.
           </div>
@@ -168,7 +170,7 @@ export default function LandingPage() {
               <div
                 key={plan.id}
                 className={`relative flex flex-col gap-4 rounded-2xl border p-8 ${
-                  highlight ? "border-accent/50 bg-[#151B12]" : "border-line bg-surface"
+                  highlight ? "border-accent/50 bg-accent-surface" : "border-line bg-surface"
                 }`}
               >
                 {highlight && (
@@ -176,7 +178,7 @@ export default function LandingPage() {
                     BESTER PREIS PRO ANALYSE
                   </span>
                 )}
-                <span className={`text-sm font-semibold tracking-wide ${highlight ? "text-accent" : "text-muted"}`}>
+                <span className={`text-sm font-semibold tracking-wide ${highlight ? "text-accent-text" : "text-muted"}`}>
                   {plan.name.toUpperCase()}
                 </span>
                 <div className="flex items-baseline gap-2">
@@ -185,15 +187,15 @@ export default function LandingPage() {
                 </div>
                 <ul className="flex flex-col gap-2.5">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-[15px] text-[#B9C1D2]">
+                    <li key={f} className="flex items-center gap-2.5 text-[15px] text-soft">
                       <Check />
                       {f}
                     </li>
                   ))}
                   {plan.perAnalysisChf !== null && (
-                    <li className="flex items-center gap-2.5 text-[15px] text-[#B9C1D2]">
+                    <li className="flex items-center gap-2.5 text-[15px] text-soft">
                       <Check />
-                      <strong className={highlight ? "text-accent" : ""}>{plan.perAnalysisChf.toFixed(2)} pro Analyse</strong>
+                      <strong className={highlight ? "text-accent-text" : ""}>{plan.perAnalysisChf.toFixed(2)} pro Analyse</strong>
                     </li>
                   )}
                 </ul>

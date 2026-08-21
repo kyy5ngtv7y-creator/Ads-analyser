@@ -46,7 +46,7 @@ export default function HistoryPage() {
 
       {filtered.length === 0 ? (
         <Card className="p-10 text-center text-[15px] text-muted">
-          Keine Analysen gefunden. <Link href="/analyze" className="text-accent">Starte eine neue Analyse</Link>.
+          Keine Analysen gefunden. <Link href="/analyze" className="text-accent-text">Starte eine neue Analyse</Link>.
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

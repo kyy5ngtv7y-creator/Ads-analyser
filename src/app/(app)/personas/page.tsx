@@ -151,12 +151,12 @@ export default function PersonasPage() {
                   setEditing(false);
                 }}
                 className={`flex items-center gap-3.5 rounded-xl border p-4 text-left ${
-                  active ? "border-accent/50 bg-[#151B12]" : "border-line bg-surface hover:bg-surface2"
+                  active ? "border-accent/50 bg-accent-surface" : "border-line bg-surface hover:bg-surface2"
                 }`}
               >
                 <span
                   className="font-display flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-bold"
-                  style={{ background: active ? "rgba(198,242,78,0.12)" : "rgba(255,255,255,0.06)", color: active ? "#C6F24E" : "#8A93A6" }}
+                  style={{ background: active ? "color-mix(in srgb, var(--accent) 16%, transparent)" : "var(--surface2)", color: active ? "var(--accent-text)" : "var(--muted)" }}
                 >
                   {p.name.slice(0, 2).toUpperCase()}
                 </span>
@@ -246,20 +246,20 @@ export default function PersonasPage() {
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <span className="text-xs font-bold tracking-wider text-faint">WER SIE/ER IST</span>
-                <p className="mt-1.5 text-sm leading-relaxed text-[#B9C1D2]">{selected.demographics}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-soft">{selected.demographics}</p>
               </div>
               <div>
                 <span className="text-xs font-bold tracking-wider text-faint">AWARENESS & TONALITÄT</span>
-                <p className="mt-1.5 text-sm leading-relaxed text-[#B9C1D2]">
+                <p className="mt-1.5 text-sm leading-relaxed text-soft">
                   {selected.awarenessLevel} — {selected.tone}
                 </p>
               </div>
             </div>
             {(
               [
-                ["SCHMERZPUNKTE", selected.pains, "#F87171"],
-                ["WÜNSCHE", selected.desires, "#4ADE80"],
-                ["EINWÄNDE", selected.objections, "#FBBF24"],
+                ["SCHMERZPUNKTE", selected.pains, "var(--flop)"],
+                ["WÜNSCHE", selected.desires, "var(--win)"],
+                ["EINWÄNDE", selected.objections, "var(--warn)"],
               ] as [string, string[], string][]
             ).map(([label, items, color]) => (
               <div key={label}>
@@ -268,14 +268,14 @@ export default function PersonasPage() {
                 </span>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {items.map((item) => (
-                    <span key={item} className="rounded-full border border-line2 bg-white/5 px-3 py-1.5 text-[13px] text-[#B9C1D2]">
+                    <span key={item} className="rounded-full border border-line2 bg-white/5 px-3 py-1.5 text-[13px] text-soft">
                       {item}
                     </span>
                   ))}
                 </div>
               </div>
             ))}
-            <p className="rounded-lg border border-accent/20 bg-accent/5 p-3.5 text-[13px] leading-relaxed text-[#B9C1D2]">
+            <p className="rounded-lg border border-accent/20 bg-accent/5 p-3.5 text-[13px] leading-relaxed text-soft">
               Analysen mit diesem Profil prüfen zusätzlich: Trifft die Ad die Pains/Wünsche dieser Person, und entkräftet sie mindestens einen Einwand?
             </p>
           </Card>

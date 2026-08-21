@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Card, ScoreBar, ScoreGauge, VerdictBadge, scoreColor } from "@/components/ui";
+import { Card, ScoreBar, ScoreGauge, VerdictBadge, scoreColor, tint } from "@/components/ui";
 import { CRITERIA, VERDICT_META } from "@/lib/scoring/framework";
 import { getAnalysis, type StoredAnalysis } from "@/lib/store";
 import type { PlatformAnalysis } from "@/lib/types";
@@ -26,7 +26,7 @@ export default function AnalysisPage() {
     return (
       <div className="flex flex-col items-start gap-4 p-10">
         <p className="text-muted">Analyse nicht gefunden (sie wird lokal in deinem Browser gespeichert).</p>
-        <Link href="/analyze" className="text-accent">
+        <Link href="/analyze" className="text-accent-text">
           Neue Analyse starten
         </Link>
       </div>
@@ -80,7 +80,7 @@ export default function AnalysisPage() {
           <ScoreGauge score={active.totalScore} />
           <span
             className="flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-bold"
-            style={{ background: `${scoreColor(active.totalScore)}1f`, color: scoreColor(active.totalScore) }}
+            style={{ background: tint(scoreColor(active.totalScore)), color: scoreColor(active.totalScore) }}
           >
             {meta.label.toUpperCase()} — {meta.advice}
           </span>
@@ -126,7 +126,7 @@ export default function AnalysisPage() {
           {active.appliedCaps.length > 0 && (
             <div className="flex flex-col gap-2 rounded-xl border border-warn/30 bg-warn/5 p-5">
               {active.appliedCaps.map((cap) => (
-                <p key={cap} className="text-sm leading-relaxed text-[#B9C1D2]">
+                <p key={cap} className="text-sm leading-relaxed text-soft">
                   <strong className="text-warn">Hard-Cap aktiv:</strong> {cap}
                 </p>
               ))}
@@ -170,13 +170,13 @@ export default function AnalysisPage() {
               <span
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[13px] font-bold"
                 style={{
-                  background: imp.priority === 1 ? "rgba(248,113,113,0.15)" : imp.priority === 2 ? "rgba(251,191,36,0.15)" : "rgba(138,147,166,0.15)",
-                  color: imp.priority === 1 ? "#F87171" : imp.priority === 2 ? "#FBBF24" : "#8A93A6",
+                  background: tint(imp.priority === 1 ? "var(--flop)" : imp.priority === 2 ? "var(--warn)" : "var(--muted)", 15),
+                  color: imp.priority === 1 ? "var(--flop)" : imp.priority === 2 ? "var(--warn)" : "var(--muted)",
                 }}
               >
                 {imp.priority}
               </span>
-              <p className="text-sm leading-relaxed text-[#B9C1D2]">
+              <p className="text-sm leading-relaxed text-soft">
                 <strong className="text-ink">{imp.title}.</strong> {imp.detail}{" "}
                 <span className="text-faint">({imp.expectedImpact})</span>
               </p>
@@ -195,7 +195,7 @@ export default function AnalysisPage() {
                 <p className="text-[15px] text-muted">{rw.original}</p>
               </div>
               <div className="rounded-lg border border-accent/35 bg-accent/5 p-3.5">
-                <span className="text-[11px] font-bold tracking-wider text-accent">{rw.label.toUpperCase()}</span>
+                <span className="text-[11px] font-bold tracking-wider text-accent-text">{rw.label.toUpperCase()}</span>
                 <p className="text-[15px]">{rw.rewritten}</p>
               </div>
             </div>

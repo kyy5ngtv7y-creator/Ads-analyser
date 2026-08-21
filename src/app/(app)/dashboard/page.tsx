@@ -84,7 +84,7 @@ export default function DashboardPage() {
         </Card>
         <Card className="flex flex-col gap-1 p-5">
           <span className="text-[13px] font-medium text-muted">Ø Winner-Score</span>
-          <span className="font-display text-3xl font-bold" style={{ color: avgScore !== null && avgScore >= 55 ? "#C6F24E" : undefined }}>
+          <span className="font-display text-3xl font-bold" style={{ color: avgScore !== null && avgScore >= 55 ? "var(--solid)" : undefined }}>
             {avgScore !== null ? `${avgScore}%` : "–"}
           </span>
           <span className="text-[13px] text-faint">{analyses.length > 0 ? "über alle Analysen" : "noch keine Analysen"}</span>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold">Projekte</h2>
-          <button type="button" onClick={() => setShowNewProject((v) => !v)} className="text-sm font-medium text-accent hover:opacity-80">
+          <button type="button" onClick={() => setShowNewProject((v) => !v)} className="text-sm font-medium text-accent-text hover:opacity-80">
             + Projekt anlegen
           </button>
         </div>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                     {projectAnalyses.length} Analysen · {personaCount} Käufer-Profile
                   </span>
                   {best !== null && (
-                    <span className="text-[13px] font-semibold" style={{ color: best >= 75 ? "#4ADE80" : best >= 55 ? "#C6F24E" : "#FBBF24" }}>
+                    <span className="text-[13px] font-semibold" style={{ color: best >= 75 ? "var(--win)" : best >= 55 ? "var(--solid)" : "var(--warn)" }}>
                       Bester Score: {best}%
                     </span>
                   )}
@@ -191,7 +191,7 @@ export default function DashboardPage() {
         </div>
         {analyses.length === 0 ? (
           <Card className="p-10 text-center text-[15px] text-muted">
-            Noch keine Analysen. <Link href="/analyze" className="text-accent">Starte deine erste Analyse</Link> — die ersten 3 sind gratis.
+            Noch keine Analysen. <Link href="/analyze" className="text-accent-text">Starte deine erste Analyse</Link> — die ersten 3 sind gratis.
           </Card>
         ) : (
           <Card className="overflow-x-auto">
@@ -211,7 +211,7 @@ export default function DashboardPage() {
                   return (
                     <tr key={a.id} className="border-t border-line text-sm hover:bg-surface2/50">
                       <td className="px-4 py-3.5">
-                        <Link href={`/analysis/${a.id}`} className="font-medium hover:text-accent">
+                        <Link href={`/analysis/${a.id}`} className="font-medium hover:text-accent-text">
                           {a.input.projectName || "Ad"} · {new Date(a.createdAt).toLocaleDateString("de-CH")}
                         </Link>
                       </td>

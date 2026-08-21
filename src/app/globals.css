@@ -1,31 +1,85 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg: #0b0e14;
-  --color-surface: #12161f;
-  --color-surface2: #1a1f2b;
-  --color-line: rgba(255, 255, 255, 0.07);
-  --color-line2: rgba(255, 255, 255, 0.12);
-  --color-ink: #eaeef6;
-  --color-muted: #8a93a6;
-  --color-faint: #5a6376;
-  --color-accent: #c6f24e;
-  --color-accent-ink: #101503;
-  --color-win: #4ade80;
-  --color-solid: #c6f24e;
-  --color-warn: #fbbf24;
-  --color-flop: #f87171;
+/* Dunkles Theme (Standard) */
+:root {
+  --bg: #0b0e14;
+  --surface: #12161f;
+  --surface2: #1a1f2b;
+  --line: rgba(255, 255, 255, 0.07);
+  --line2: rgba(255, 255, 255, 0.12);
+  --ink: #eaeef6;
+  --muted: #8a93a6;
+  --faint: #5a6376;
+  --soft: #b9c1d2;
+  --accent: #c6f24e;
+  --accent-ink: #101503;
+  --accent-text: #c6f24e;
+  --accent-surface: #151b12;
+  --elevated: #0e1219;
+  --win: #4ade80;
+  --solid: #c6f24e;
+  --warn: #fbbf24;
+  --flop: #f87171;
+  --tone: #ffffff; /* Misch-Ton für Chip-Farben: hellt auf Dunkel auf */
+  --card-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  --modal-shadow: 0 40px 120px rgba(0, 0, 0, 0.7);
+}
+
+/* Helles Theme */
+:root[data-theme="light"] {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface2: #e9edf3;
+  --line: rgba(15, 23, 42, 0.08);
+  --line2: rgba(15, 23, 42, 0.14);
+  --ink: #171a21;
+  --muted: #5b6472;
+  --faint: #8b94a5;
+  --soft: #3f4756;
+  --accent: #c6f24e;
+  --accent-ink: #101503;
+  --accent-text: #557d00;
+  --accent-surface: #f3f8df;
+  --elevated: #ffffff;
+  --win: #16a34a;
+  --solid: #4d7c0f;
+  --warn: #b45309;
+  --flop: #dc2626;
+  --tone: #14161a; /* dunkelt Chip-Farben auf Hell ab */
+  --card-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
+  --modal-shadow: 0 40px 120px rgba(15, 23, 42, 0.2);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-soft: var(--soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-accent-surface: var(--accent-surface);
+  --color-elevated: var(--elevated);
+  --color-win: var(--win);
+  --color-solid: var(--solid);
+  --color-warn: var(--warn);
+  --color-flop: var(--flop);
   --font-display: var(--font-space-grotesk), system-ui, sans-serif;
   --font-body: var(--font-instrument-sans), system-ui, sans-serif;
 }
 
 html {
-  background: #0b0e14;
+  background: var(--bg);
 }
 
 body {
-  background: #0b0e14;
-  color: #eaeef6;
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }

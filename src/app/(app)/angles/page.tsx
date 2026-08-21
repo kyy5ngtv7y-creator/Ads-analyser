@@ -2,21 +2,23 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Card, Chip, Field, PrimaryButton, inputCls } from "@/components/ui";
+import { Card, Chip, Field, PrimaryButton, inputCls, tint } from "@/components/ui";
 import { getAngleSets, getPersonas, getProjects, saveAngleSet, uid, type StoredAngleSet } from "@/lib/store";
 import type { AngleSuggestion, CampaignGoal, FunnelStage, Persona, Project } from "@/lib/types";
 
-const FIT_COLOR = { strong: "#4ADE80", ok: "#FBBF24", weak: "#F87171" } as const;
+const FIT_COLOR = { strong: "var(--win)", ok: "var(--warn)", weak: "var(--flop)" } as const;
 const FIT_LABEL = { strong: "stark", ok: "ok", weak: "schwach" } as const;
+// Roh-Hexwerte werden mit var(--tone) gemischt: auf Dunkel aufgehellt, auf Hell abgedunkelt.
+const mixTone = (hex: string) => `color-mix(in srgb, ${hex} 68%, var(--tone) 32%)`;
 const TYPE_COLORS: Record<string, string> = {
-  pain_point: "#F87171",
-  desire: "#67E8F9",
-  social_proof: "#4ADE80",
-  us_vs_them: "#FBBF24",
-  mechanism: "#C6F24E",
-  fomo: "#FB923C",
-  price_value: "#A78BFA",
-  identity: "#F472B6",
+  pain_point: "var(--flop)",
+  desire: mixTone("#22D3EE"),
+  social_proof: "var(--win)",
+  us_vs_them: "var(--warn)",
+  mechanism: "var(--solid)",
+  fomo: mixTone("#FB923C"),
+  price_value: mixTone("#A78BFA"),
+  identity: mixTone("#F472B6"),
 };
 
 export default function AnglesPage() {
@@ -156,7 +158,7 @@ export default function AnglesPage() {
           </PrimaryButton>
           {!project && (
             <span className="text-sm text-muted">
-              Zuerst im <Link href="/dashboard" className="text-accent">Dashboard</Link> ein Projekt anlegen.
+              Zuerst im <Link href="/dashboard" className="text-accent-text">Dashboard</Link> ein Projekt anlegen.
             </span>
           )}
         </div>
@@ -173,12 +175,12 @@ export default function AnglesPage() {
           </span>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {currentSet.angles.map((angle, i) => {
-              const color = TYPE_COLORS[angle.type] ?? "#C6F24E";
+              const color = TYPE_COLORS[angle.type] ?? "var(--solid)";
               return (
                 <Card key={i} className="flex flex-col gap-3.5 p-5">
                   <span
                     className="w-fit rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wider"
-                    style={{ background: `${color}1f`, color }}
+                    style={{ background: tint(color), color }}
                   >
                     {angle.typeLabel.toUpperCase()}
                   </span>
@@ -186,7 +188,7 @@ export default function AnglesPage() {
                   <p className="text-[13.5px] leading-relaxed text-muted">{angle.coreMessage}</p>
                   <div className="flex flex-col gap-2">
                     {angle.hooks.slice(0, 2).map((hook) => (
-                      <p key={hook} className="border-l-2 border-line2 pl-3.5 text-[13.5px] leading-relaxed text-[#B9C1D2]">
+                      <p key={hook} className="border-l-2 border-line2 pl-3.5 text-[13.5px] leading-relaxed text-soft">
                         {hook}
                       </p>
                     ))}
@@ -213,7 +215,7 @@ export default function AnglesPage() {
                   </div>
                   <Link
                     href={`/analyze?angleSet=${currentSet.id}&angle=${i}`}
-                    className="mt-auto rounded-lg border border-accent/40 py-2.5 text-center text-[13px] font-semibold text-accent hover:bg-accent/10"
+                    className="mt-auto rounded-lg border border-accent/40 py-2.5 text-center text-[13px] font-semibold text-accent-text hover:bg-accent/10"
                   >
                     Ad zu diesem Angle bauen →
                   </Link>

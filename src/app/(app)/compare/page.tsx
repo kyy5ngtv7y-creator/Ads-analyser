@@ -38,7 +38,7 @@ export default function ComparePage() {
 
       {analyses.length < 2 ? (
         <Card className="p-10 text-center text-[15px] text-muted">
-          Du brauchst mindestens zwei Analysen. <Link href="/analyze" className="text-accent">Analysiere eine zweite Variante</Link>.
+          Du brauchst mindestens zwei Analysen. <Link href="/analyze" className="text-accent-text">Analysiere eine zweite Variante</Link>.
         </Card>
       ) : (
         <>
@@ -95,7 +95,7 @@ export default function ComparePage() {
                         );
                       })}
                     </div>
-                    <Link href={`/analysis/${a.id}`} className="text-sm text-accent hover:opacity-80">
+                    <Link href={`/analysis/${a.id}`} className="text-sm text-accent-text hover:opacity-80">
                       Details ansehen →
                     </Link>
                   </Card>

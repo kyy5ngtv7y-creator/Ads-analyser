@@ -10,14 +10,19 @@ export function Card({ children, className = "" }: { children: React.ReactNode; 
 }
 
 export function verdictColor(verdict: Verdict): string {
-  return { winner: "#4ADE80", solid: "#C6F24E", risky: "#FBBF24", flop: "#F87171" }[verdict];
+  return { winner: "var(--win)", solid: "var(--solid)", risky: "var(--warn)", flop: "var(--flop)" }[verdict];
 }
 
 export function scoreColor(score: number): string {
-  if (score >= 75) return "#4ADE80";
-  if (score >= 55) return "#C6F24E";
-  if (score >= 35) return "#FBBF24";
-  return "#F87171";
+  if (score >= 75) return "var(--win)";
+  if (score >= 55) return "var(--solid)";
+  if (score >= 35) return "var(--warn)";
+  return "var(--flop)";
+}
+
+/** Transparente Tönung einer Theme-Farbe (funktioniert in beiden Themes). */
+export function tint(color: string, pct = 13): string {
+  return `color-mix(in srgb, ${color} ${pct}%, transparent)`;
 }
 
 export function VerdictBadge({ verdict, score }: { verdict: Verdict; score?: number }) {
@@ -25,7 +30,7 @@ export function VerdictBadge({ verdict, score }: { verdict: Verdict; score?: num
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] font-semibold"
-      style={{ background: `${color}1f`, color }}
+      style={{ background: tint(color), color }}
     >
       {score !== undefined && <>{score}%&nbsp;</>}
       {VERDICT_META[verdict].label}
@@ -53,22 +58,22 @@ export function ScoreGauge({ score, label = "Winner-Score", size = 280 }: { scor
       <path
         d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
         fill="none"
-        stroke="#1A1F2B"
+        style={{ stroke: "var(--surface2)" }}
         strokeWidth={size * 0.065}
         strokeLinecap="round"
       />
       <path
         d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
         fill="none"
-        stroke={color}
+        style={{ stroke: color }}
         strokeWidth={size * 0.065}
         strokeLinecap="round"
         strokeDasharray={`${(arcLen * score) / 100} ${arcLen + 10}`}
       />
-      <text x={cx} y={cy - size * 0.09} textAnchor="middle" fill="#EAEEF6" fontSize={size * 0.19} fontWeight={700} fontFamily="var(--font-display)">
+      <text x={cx} y={cy - size * 0.09} textAnchor="middle" style={{ fill: "var(--ink)" }} fontSize={size * 0.19} fontWeight={700} fontFamily="var(--font-display)">
         {score}%
       </text>
-      <text x={cx} y={cy} textAnchor="middle" fill="#8A93A6" fontSize={size * 0.048}>
+      <text x={cx} y={cy} textAnchor="middle" style={{ fill: "var(--muted)" }} fontSize={size * 0.048}>
         {label}
       </text>
     </svg>
@@ -93,7 +98,7 @@ export function OptionCard({
       type="button"
       onClick={onClick}
       className={`flex min-h-[44px] flex-1 flex-col gap-1.5 rounded-xl border p-4 text-left transition-colors ${
-        active ? "border-accent/60 bg-[#151B12]" : "border-line2 bg-surface hover:border-line2 hover:bg-surface2"
+        active ? "border-accent/60 bg-accent-surface" : "border-line2 bg-surface hover:border-line2 hover:bg-surface2"
       }`}
     >
       <span className="flex items-center justify-between">

@@ -1,15 +1,27 @@
 {
+  "pages": [
+    { "id": "page-1", "name": "Dunkel" },
+    { "id": "page-2", "name": "Hell" }
+  ],
   "artboards": [
-    { "file": "Landing.dc.html", "title": "Landing Page", "x": 0, "y": 0, "w": 1440, "h": 2600 },
-    { "file": "Dashboard.dc.html", "title": "Dashboard", "x": 0, "y": 2720, "w": 1440, "h": 900 },
-    { "file": "Wizard.dc.html", "title": "Analyse-Wizard · Schritt 3", "x": 1520, "y": 2720, "w": 1440, "h": 900 },
-    { "file": "Main.dc.html", "title": "Analyse-Ergebnis", "x": 3040, "y": 2720, "w": 1440, "h": 1700 },
-    { "file": "Personas.dc.html", "title": "Käufer-Profile", "x": 0, "y": 4540, "w": 1440, "h": 900 },
-    { "file": "Angles.dc.html", "title": "Angle-Finder", "x": 1520, "y": 4540, "w": 1440, "h": 1160 },
-    { "file": "Paywall.dc.html", "title": "Paywall · Trial beendet", "x": 3040, "y": 4540, "w": 1440, "h": 900 }
+    { "file": "Landing.dc.html", "title": "Landing Page", "x": 0, "y": 0, "w": 1440, "h": 2600, "page": "page-1" },
+    { "file": "Dashboard.dc.html", "title": "Dashboard", "x": 0, "y": 2720, "w": 1440, "h": 900, "page": "page-1" },
+    { "file": "Wizard.dc.html", "title": "Analyse-Wizard · Schritt 3", "x": 1520, "y": 2720, "w": 1440, "h": 900, "page": "page-1" },
+    { "file": "Main.dc.html", "title": "Analyse-Ergebnis", "x": 3040, "y": 2720, "w": 1440, "h": 1700, "page": "page-1" },
+    { "file": "Personas.dc.html", "title": "Käufer-Profile", "x": 0, "y": 4540, "w": 1440, "h": 900, "page": "page-1" },
+    { "file": "Angles.dc.html", "title": "Angle-Finder", "x": 1520, "y": 4540, "w": 1440, "h": 1160, "page": "page-1" },
+    { "file": "Paywall.dc.html", "title": "Paywall · Trial beendet", "x": 3040, "y": 4540, "w": 1440, "h": 900, "page": "page-1" },
+    { "file": "LandingHell.dc.html", "title": "Landing Page (hell)", "x": 0, "y": 0, "w": 1440, "h": 2600, "page": "page-2" },
+    { "file": "DashboardHell.dc.html", "title": "Dashboard (hell)", "x": 0, "y": 2720, "w": 1440, "h": 900, "page": "page-2" },
+    { "file": "WizardHell.dc.html", "title": "Analyse-Wizard (hell)", "x": 1520, "y": 2720, "w": 1440, "h": 900, "page": "page-2" },
+    { "file": "MainHell.dc.html", "title": "Analyse-Ergebnis (hell)", "x": 3040, "y": 2720, "w": 1440, "h": 1700, "page": "page-2" },
+    { "file": "PersonasHell.dc.html", "title": "Käufer-Profile (hell)", "x": 0, "y": 4540, "w": 1440, "h": 900, "page": "page-2" },
+    { "file": "AnglesHell.dc.html", "title": "Angle-Finder (hell)", "x": 1520, "y": 4540, "w": 1440, "h": 1160, "page": "page-2" },
+    { "file": "PaywallHell.dc.html", "title": "Paywall (hell)", "x": 3040, "y": 4540, "w": 1440, "h": 900, "page": "page-2" }
   ],
   "annotations": [
-    { "id": "richtung", "x": 1520, "y": 0, "w": 420, "text": "Ads·Analyser — Performance-Cockpit (dunkel)\n\nRichtung: dunkles UI, Lime-Akzent #C6F24E, Verdict-Farben Grün/Lime/Amber/Rot.\nFonts: Space Grotesk (Display) + Instrument Sans (Body).\n\n7 Screens: Landing, Dashboard, Wizard (Schritt 3 von 8), Ergebnis mit Score-Gauge, Käufer-Profile, Angle-Finder, Paywall (Trial → 40.-/120.- CHF).\n\nInhalte sind Beispieldaten (Projekt 'Lumea Skincare'). [KUNDENLOGO]-Platzhalter auf der Landing Page ersetzen." }
+    { "id": "richtung", "x": 1520, "y": 0, "w": 420, "page": "page-1", "text": "Ads·Analyser — Performance-Cockpit (dunkel)\n\nRichtung: dunkles UI, Lime-Akzent #C6F24E, Verdict-Farben Grün/Lime/Amber/Rot.\nFonts: Space Grotesk (Display) + Instrument Sans (Body).\n\n7 Screens: Landing, Dashboard, Wizard (Schritt 3 von 8), Ergebnis mit Score-Gauge, Käufer-Profile, Angle-Finder, Paywall (Trial → 40.-/120.- CHF).\n\nInhalte sind Beispieldaten (Projekt 'Lumea Skincare'). [KUNDENLOGO]-Platzhalter auf der Landing Page ersetzen." },
+    { "id": "richtung-hell", "x": 1520, "y": 0, "w": 420, "page": "page-2", "text": "Helle Variante\n\nGleiche Struktur und Inhalte wie die dunkle Version.\nPalette: Hintergrund #F6F7F9, Karten Weiss, Akzent dunkleres Lime #7FAE00 (Lesbarkeit auf Hell), Verdict-Farben abgedunkelt (#16A34A / #B45309 / #DC2626).\n\nIn der App ist das als umschaltbares Theme umgesetzt (Sonne/Mond-Schalter in der Seitenleiste)." }
   ],
-  "launch": { "view": "canvas" }
+  "launch": { "view": "canvas", "page": "page-2" }
 }

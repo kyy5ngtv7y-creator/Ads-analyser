@@ -214,7 +214,7 @@ function AnalyzeWizard() {
                   i === step
                     ? "border-accent bg-accent text-accent-ink"
                     : i < step
-                      ? "border-accent/50 bg-accent/10 text-accent"
+                      ? "border-accent/50 bg-accent/10 text-accent-text"
                       : "border-line2"
                 }`}
               >
@@ -238,7 +238,7 @@ function AnalyzeWizard() {
       {/* Step content */}
       <div className="flex min-w-0 flex-1 flex-col gap-8 p-6 lg:p-12">
         <div className="flex flex-col gap-2">
-          <span className="text-[13px] font-semibold tracking-wide text-accent">
+          <span className="text-[13px] font-semibold tracking-wide text-accent-text">
             SCHRITT {step + 1} VON {STEPS.length}
           </span>
           <h1 className="font-display text-[28px] font-bold">{STEPS[step]}</h1>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; background: #F6F7F9; color: #171A21; font-family: 'Instrument Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #7FAE00; text-decoration: none; } a:hover { color: #6A9400; }
+    .display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    .card { background: #FFFFFF; border: 1px solid rgba(15,23,42,0.08); border-radius: 14px; }
+    .typebadge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 5px 11px; border-radius: 999px; }
+    .hook { font-size: 13.5px; color: #3F4756; line-height: 1.5; padding-left: 14px; border-left: 2px solid rgba(15,23,42,0.14); }
+    .fitdot { width: 7px; height: 7px; border-radius: 999px; }
+    .fitlabel { font-size: 11px; color: #8B94A5; display: flex; align-items: center; gap: 5px; }
+    .buildbtn { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid rgba(127,174,0,0.4); color: #7FAE00; font-size: 13px; font-weight: 600; padding: 9px; border-radius: 9px; }
+  </style>
+</helmet>
+<div style="width: 1440px; background: #F6F7F9; padding: 32px 40px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px;">
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <h1 class="display" style="font-size: 26px; font-weight: 700; margin: 0;">Angle-Finder</h1>
+      <span style="color: #5B6472; font-size: 15px;">6 Angles für dein Produkt, dein Ziel und deinen Wunschkunden — bevor du die Ad baust.</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; background: #7FAE00; color: #FFFFFF; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 10px;">Neu generieren</div>
+  </div>
+
+  <!-- Input context bar -->
+  <div class="card" style="display: flex; align-items: center; gap: 0; padding: 16px 24px;">
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 11px; font-weight: 700; color: #8B94A5; letter-spacing: 0.06em;">PRODUKT</span><span style="font-size: 14px; font-weight: 500;">Lumea Bakuchiol-Serum</span></div>
+    <div style="width: 1px; height: 34px; background: rgba(15,23,42,0.09); margin: 0 24px;"></div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 11px; font-weight: 700; color: #8B94A5; letter-spacing: 0.06em;">TYP · PREISKLASSE</span><span style="font-size: 14px; font-weight: 500;">Eigenes Produkt · Premium</span></div>
+    <div style="width: 1px; height: 34px; background: rgba(15,23,42,0.09); margin: 0 24px;"></div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 11px; font-weight: 700; color: #8B94A5; letter-spacing: 0.06em;">ZIEL · METRIK</span><span style="font-size: 14px; font-weight: 500;">Verkaufen · Sales</span></div>
+    <div style="width: 1px; height: 34px; background: rgba(15,23,42,0.09); margin: 0 24px;"></div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 11px; font-weight: 700; color: #8B94A5; letter-spacing: 0.06em;">FUNNEL</span><span style="font-size: 14px; font-weight: 500;">Cold Audience</span></div>
+    <div style="width: 1px; height: 34px; background: rgba(15,23,42,0.09); margin: 0 24px;"></div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;"><span style="font-size: 11px; font-weight: 700; color: #8B94A5; letter-spacing: 0.06em;">KÄUFER-PROFIL</span><span style="font-size: 14px; font-weight: 500;">Skincare-Sandra</span></div>
+  </div>
+
+  <!-- Angle cards -->
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px;">
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="typebadge" style="background: rgba(220,38,38,0.12); color: #DC2626;">PAIN-POINT</span>
+        <span style="font-size: 12px; color: #16A34A; font-weight: 600;">Top-Empfehlung</span>
+      </div>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">„Sensible Haut verträgt kein Retinol"</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Das Problem benennen, das Sandra seit Jahren kennt — und den sanften Wirkstoff als Ausweg zeigen.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„Deine Haut brennt nach jeder Anti-Aging-Creme? Dann hör auf, sie zu bestrafen."</div>
+        <div class="hook">„3 Jahre lang hat meine Haut alles abgelehnt — bis auf das hier."</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Cold: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Retargeting: ok</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #DC2626;"></span>Kunden: schwach</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <span class="typebadge" style="background: rgba(22,163,74,0.12); color: #16A34A; align-self: flex-start;">SOCIAL PROOF</span>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">2'100 Frauen können sich nicht irren</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Sandras Einwand „wieder nur Marketing" mit echten Bewertungen und Zahlen entkräften.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„4.8 Sterne von 2'100 Frauen mit sensibler Haut. Das ist kein Zufall."</div>
+        <div class="hook">Review-Collage als Creative, echte Kundenstimme als Voiceover.</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Cold: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Retargeting: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Kunden: ok</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <span class="typebadge" style="background: rgba(127,174,0,0.12); color: #7FAE00; align-self: flex-start;">NEUHEIT / MECHANISMUS</span>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">Bakuchiol: wirkt wie Retinol, ohne Reizung</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Der „endlich gibt es etwas Neues"-Angle — erklärt in einem Satz, warum es diesmal anders ist.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„Dermatologen nennen es das sanfte Retinol — deine Haut merkt nur die Wirkung."</div>
+        <div class="hook">Split-Screen-Demo: Retinol-Rötung links, Bakuchiol rechts.</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Cold: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Retargeting: ok</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Kunden: ok</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <span class="typebadge" style="background: rgba(14,116,144,0.12); color: #0E7490; align-self: flex-start;">DESIRE / TRAUMZUSTAND</span>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">Morgens in den Spiegel schauen — und lächeln</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Nicht das Produkt, sondern Sandras Wunschzustand zeigen: sich wohlfühlen, ohne Filter.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„Stell dir vor, du brauchst den Weichzeichner-Filter nicht mehr."</div>
+        <div class="hook">Morgenroutine-Video, natürliches Licht, keine Studio-Optik.</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Cold: ok</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Retargeting: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Kunden: stark</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <span class="typebadge" style="background: rgba(180,83,9,0.12); color: #B45309; align-self: flex-start;">US-VS-THEM</span>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">Gegen die 7-Schritte-Routine-Industrie</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Ein Feindbild, das Sandra kennt: überteuerte Routinen mit 7 Produkten, die sich gegenseitig neutralisieren.</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„Die Beauty-Industrie will, dass du 7 Produkte kaufst. Deine Haut braucht eins."</div>
+        <div class="hook">Creative: 7 Tiegel fallen um, einer bleibt stehen.</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Cold: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Retargeting: ok</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #DC2626;"></span>Kunden: schwach</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <span class="typebadge" style="background: rgba(124,58,237,0.12); color: #7C3AED; align-self: flex-start;">PREIS / WERT</span>
+      <h3 class="display" style="font-size: 17px; font-weight: 600; margin: 0; line-height: 1.35;">Teurer als Drogerie. Günstiger als Enttäuschung.</h3>
+      <p style="font-size: 13.5px; color: #5B6472; margin: 0; line-height: 1.55;">Den Preis-Einwand frontal nehmen: Was haben die 12 gescheiterten Cremes zusammen gekostet?</p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="hook">„Rechne zusammen, was du für Cremes ausgegeben hast, die nichts gebracht haben."</div>
+        <div class="hook">Premium-Framing: 90 Tage Wirkung statt Rabattschlacht.</div>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Cold: ok</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #16A34A;"></span>Retargeting: stark</span>
+        <span class="fitlabel"><span class="fitdot" style="background: #B45309;"></span>Kunden: ok</span>
+      </div>
+      <div class="buildbtn">Ad zu diesem Angle bauen<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#7FAE00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUsage, trialState, type Usage } from "@/lib/store";
 import { PLANS } from "@/lib/billing/plans";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5 px-3.5 pb-5 pt-1.5">
       <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden>
-        <rect x="1" y="1" width="24" height="24" rx="7" stroke="#C6F24E" strokeWidth="2" />
-        <path d="M7 16.5 L11 9 L14.5 14 L19 7.5" stroke="#C6F24E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="1" y="1" width="24" height="24" rx="7" style={{ stroke: "var(--accent-text)" }} strokeWidth="2" />
+        <path d="M7 16.5 L11 9 L14.5 14 L19 7.5" style={{ stroke: "var(--accent-text)" }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <span className="font-display text-[17px] font-bold">Ads·Analyser</span>
     </Link>
@@ -57,8 +58,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           );
         })}
+        <div className="mt-auto flex flex-col gap-2.5">
+          <ThemeToggle />
+        </div>
         {usage && state && plan && (
-          <div className="mt-auto rounded-xl border border-line bg-surface p-3.5 text-[13px]">
+          <div className="rounded-xl border border-line bg-surface p-3.5 text-[13px]">
             <div className="flex justify-between">
               <span className="text-muted">Analysen</span>
               <span className="font-semibold">

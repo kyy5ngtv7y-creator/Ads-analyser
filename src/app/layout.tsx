@@ -22,7 +22,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="de" className={`${spaceGrotesk.variable} ${instrumentSans.variable}`}>
+    <html lang="de" className={`${spaceGrotesk.variable} ${instrumentSans.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('adsanalyser.theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
