@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; background: #07090D; color: #EAEEF6; font-family: 'Instrument Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #C6F24E; text-decoration: none; } a:hover { color: #DCF98A; }
+    .display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    .check { display: flex; align-items: center; gap: 10px; color: #B9C1D2; font-size: 14.5px; }
+  </style>
+</helmet>
+<div style="width: 1440px; height: 900px; background: #07090D; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+
+  <!-- Dimmed dashboard hint behind -->
+  <div style="position: absolute; inset: 0; opacity: 0.18; display: flex; flex-direction: column; gap: 16px; padding: 40px 64px; filter: blur(2px);">
+    <div style="height: 56px; background: #12161F; border-radius: 12px;"></div>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;"><div style="height: 110px; background: #12161F; border-radius: 12px;"></div><div style="height: 110px; background: #12161F; border-radius: 12px;"></div><div style="height: 110px; background: #12161F; border-radius: 12px;"></div><div style="height: 110px; background: #12161F; border-radius: 12px;"></div></div>
+    <div style="flex: 1; background: #12161F; border-radius: 12px;"></div>
+  </div>
+
+  <!-- Paywall modal -->
+  <div style="position: relative; width: 880px; background: #0E1219; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 44px 48px; display: flex; flex-direction: column; gap: 28px; box-shadow: 0 40px 120px rgba(0,0,0,0.7);">
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 999px; background: rgba(198,242,78,0.1); display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="4" y="9" width="14" height="9" rx="2" stroke="#C6F24E" stroke-width="1.8"/><path d="M7 9V6.5a4 4 0 0 1 8 0V9" stroke="#C6F24E" stroke-width="1.8"/><circle cx="11" cy="13.5" r="1.4" fill="#C6F24E"/></svg>
+      </div>
+      <h1 class="display" style="font-size: 30px; font-weight: 700; margin: 0;">Deine 3 Gratis-Analysen sind aufgebraucht</h1>
+      <p style="font-size: 16px; color: #8A93A6; margin: 0; max-width: 560px; line-height: 1.6;">Du hast gesehen, wie das Tool bewertet. Wähle jetzt deinen Plan — je mehr du testest, desto günstiger wird jede Analyse.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
+      <!-- Standard -->
+      <div style="background: #12161F; border: 1px solid rgba(255,255,255,0.09); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 16px;">
+        <span style="font-size: 13px; font-weight: 700; color: #8A93A6; letter-spacing: 0.05em;">STANDARD</span>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span class="display" style="font-size: 40px; font-weight: 700;">40.–</span>
+          <span style="color: #8A93A6; font-size: 15px;">/Monat</span>
+        </div>
+        <div style="border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 14px; color: #8A93A6;">Preis pro Analyse</span>
+          <span class="display" style="font-size: 18px; font-weight: 700;">2.00</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 9px;">
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>20 Analysen / Monat</div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Meta + TikTok · Bild + Video</div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Käufer-Profile + Angle-Finder</div>
+        </div>
+        <div style="margin-top: auto; border: 1px solid rgba(255,255,255,0.16); text-align: center; font-weight: 600; font-size: 15px; padding: 12px; border-radius: 10px;">Standard wählen</div>
+      </div>
+
+      <!-- Pro -->
+      <div style="background: #151B12; border: 1.5px solid rgba(198,242,78,0.55); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 16px; position: relative;">
+        <div style="position: absolute; top: -12px; right: 24px; background: #C6F24E; color: #101503; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 999px; letter-spacing: 0.04em;">4× GÜNSTIGER PRO ANALYSE</div>
+        <span style="font-size: 13px; font-weight: 700; color: #C6F24E; letter-spacing: 0.05em;">PRO</span>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span class="display" style="font-size: 40px; font-weight: 700;">120.–</span>
+          <span style="color: #8A93A6; font-size: 15px;">/Monat</span>
+        </div>
+        <div style="border: 1px solid rgba(198,242,78,0.35); background: rgba(198,242,78,0.06); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 14px; color: #B9C1D2;">Preis pro Analyse</span>
+          <span class="display" style="font-size: 18px; font-weight: 700; color: #C6F24E;">0.50</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 9px;">
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>240 Analysen / Monat</div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Alles aus Standard</div>
+          <div class="check"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5 6.5 12 13 4.5" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>A/B-Vergleich + PDF-Reports für Kunden</div>
+        </div>
+        <div style="margin-top: auto; background: #C6F24E; color: #101503; text-align: center; font-weight: 600; font-size: 15px; padding: 12px; border-radius: 10px;">Pro wählen</div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 24px; font-size: 13px; color: #5A6376;">
+      <span>Monatlich kündbar</span><span>·</span><span>Preise in CHF inkl. MwSt.</span><span>·</span><span>Zahlung über Stripe</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

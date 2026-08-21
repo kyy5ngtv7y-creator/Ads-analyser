@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <style>
+    body { margin: 0; background: #0B0E14; color: #EAEEF6; font-family: 'Instrument Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #C6F24E; text-decoration: none; } a:hover { color: #DCF98A; }
+    .display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    .step { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #5A6376; }
+    .stepnum { width: 24px; height: 24px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex: 0 0 auto; }
+    .step-done .stepnum { background: rgba(198,242,78,0.12); border-color: rgba(198,242,78,0.5); color: #C6F24E; }
+    .step-done { color: #8A93A6; }
+    .step-active { color: #EAEEF6; font-weight: 600; }
+    .step-active .stepnum { background: #C6F24E; border-color: #C6F24E; color: #101503; }
+    .goalcard { background: #12161F; border: 1px solid rgba(255,255,255,0.09); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1 1 0; }
+    .goalcard-active { background: #151B12; border: 1.5px solid rgba(198,242,78,0.55); }
+    .chip { font-size: 14px; font-weight: 500; color: #8A93A6; border: 1px solid rgba(255,255,255,0.12); padding: 9px 18px; border-radius: 999px; }
+    .chip-active { color: #101503; background: #C6F24E; border-color: #C6F24E; font-weight: 600; }
+  </style>
+</helmet>
+<div style="width: 1440px; height: 900px; display: flex; background: #0B0E14;">
+
+  <!-- Step rail -->
+  <div style="width: 300px; flex: 0 0 auto; border-right: 1px solid rgba(255,255,255,0.06); padding: 28px 28px; display: flex; flex-direction: column; gap: 28px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <svg width="22" height="22" viewBox="0 0 26 26" fill="none"><rect x="1" y="1" width="24" height="24" rx="7" stroke="#C6F24E" stroke-width="2"/><path d="M7 16.5 L11 9 L14.5 14 L19 7.5" stroke="#C6F24E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="display" style="font-size: 16px; font-weight: 700;">Neue Analyse</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 18px;">
+      <div class="step step-done"><span class="stepnum">✓</span>Projekt &amp; Plattform</div>
+      <div class="step step-done"><span class="stepnum">✓</span>Angebots-Typ &amp; Preisklasse</div>
+      <div class="step step-active"><span class="stepnum">3</span>Ziel &amp; wichtigste Metrik</div>
+      <div class="step"><span class="stepnum">4</span>Funnel-Stufe</div>
+      <div class="step"><span class="stepnum">5</span>Käufer-Profil</div>
+      <div class="step"><span class="stepnum">6</span>Creative hochladen</div>
+      <div class="step"><span class="stepnum">7</span>Copy eingeben</div>
+      <div class="step"><span class="stepnum">8</span>Analyse starten</div>
+    </div>
+    <div style="margin-top: auto; background: #12161F; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.55; color: #8A93A6;">
+      <strong style="color: #EAEEF6;">Lumea Skincare</strong><br>
+      Meta + TikTok · Eigenes Produkt · Premium
+    </div>
+  </div>
+
+  <!-- Step content -->
+  <div style="flex: 1 1 0; display: flex; flex-direction: column; padding: 56px 72px 32px; gap: 40px;">
+    <div style="display: flex; flex-direction: column; gap: 10px; max-width: 720px;">
+      <span style="font-size: 13px; font-weight: 600; color: #C6F24E; letter-spacing: 0.06em;">SCHRITT 3 VON 8</span>
+      <h1 class="display" style="font-size: 32px; font-weight: 700; margin: 0;">Was soll diese Kampagne erreichen?</h1>
+      <p style="font-size: 16px; color: #8A93A6; margin: 0; line-height: 1.6;">Das Ziel bestimmt die Bewertungsmassstäbe — eine Brand-Ad wird anders geprüft als eine Sales-Ad.</p>
+    </div>
+
+    <div style="display: flex; gap: 18px;">
+      <div class="goalcard goalcard-active">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(198,242,78,0.12); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6h14l-1.5 9a1.5 1.5 0 0 1-1.5 1.3H6A1.5 1.5 0 0 1 4.5 15L3 6Z" stroke="#C6F24E" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 6V5a3 3 0 0 1 6 0v1" stroke="#C6F24E" stroke-width="1.7"/></svg></div>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" fill="#C6F24E"/><path d="M6.5 11.5 L9.5 14.5 L15.5 8" stroke="#101503" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="display" style="font-size: 19px; font-weight: 600; margin: 0;">Verkaufen</h3>
+        <p style="font-size: 14px; color: #8A93A6; margin: 0; line-height: 1.55;">Produkt oder Service direkt verkaufen. Bewertet werden Angebot, Kaufanreiz und der Weg zum Kauf.</p>
+      </div>
+      <div class="goalcard">
+        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="11" rx="2" stroke="#8A93A6" stroke-width="1.7"/><path d="m3 7 7 5 7-5" stroke="#8A93A6" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+        <h3 class="display" style="font-size: 19px; font-weight: 600; margin: 0;">Leads generieren</h3>
+        <p style="font-size: 14px; color: #8A93A6; margin: 0; line-height: 1.55;">Kontakte sammeln — Anfragen, Anmeldungen, Erstgespräche. Bewertet werden Lead-Magnet und Einstiegshürde.</p>
+      </div>
+      <div class="goalcard">
+        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2.5 12.2 7l5 .7-3.6 3.5.9 5-4.5-2.4L5.5 16.2l.9-5L2.8 7.7l5-.7L10 2.5Z" stroke="#8A93A6" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+        <h3 class="display" style="font-size: 19px; font-weight: 600; margin: 0;">Marke aufbauen</h3>
+        <p style="font-size: 14px; color: #8A93A6; margin: 0; line-height: 1.55;">Brand bekannt machen. Bewertet werden Einprägsamkeit, Emotion und Markenpräsenz — kein harter Verkaufs-CTA nötig.</p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h2 class="display" style="font-size: 20px; font-weight: 600; margin: 0;">Was ist bei dieser Ad am wichtigsten?</h2>
+        <p style="font-size: 15px; color: #8A93A6; margin: 0;">Der Winner-Score wird auf dieses Event optimiert.</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <span class="chip">Impressionen</span>
+        <span class="chip chip-active">Sales</span>
+        <span class="chip">Add-to-Cart</span>
+        <span class="chip">Checkout</span>
+        <span class="chip">Leads</span>
+        <span class="chip">Bekanntheit</span>
+      </div>
+    </div>
+
+    <!-- Footer nav -->
+    <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 22px;">
+      <div style="display: flex; align-items: center; gap: 8px; color: #8A93A6; font-size: 15px; font-weight: 500; border: 1px solid rgba(255,255,255,0.14); padding: 11px 22px; border-radius: 10px;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2 4 7l5 5" stroke="#8A93A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Zurück
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #C6F24E; color: #101503; font-size: 15px; font-weight: 600; padding: 11px 26px; border-radius: 10px;">
+        Weiter
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="m5 2 5 5-5 5" stroke="#101503" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
