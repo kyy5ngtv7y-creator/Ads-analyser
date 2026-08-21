@@ -1,0 +1,563 @@
+<title>Ads·Analyser Testversion</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #0b0e14; --surface: #12161f; --surface2: #1a1f2b;
+    --line: rgba(255,255,255,.07); --line2: rgba(255,255,255,.13);
+    --ink: #eaeef6; --muted: #8a93a6; --faint: #5a6376; --soft: #b9c1d2;
+    --accent: #c6f24e; --accent-ink: #101503;
+    --win: #4ade80; --solid: #c6f24e; --warn: #fbbf24; --flop: #f87171;
+    --display: 'Space Grotesk', system-ui, sans-serif;
+    --body: 'Instrument Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 80px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--line); margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 18px; }
+  .tabs { display: flex; gap: 8px; }
+  .tab { min-height: 44px; padding: 0 20px; border-radius: 10px; border: 1px solid var(--line2); background: transparent; color: var(--muted); font: 600 15px var(--body); cursor: pointer; }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .tab:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  h1 { font-family: var(--display); font-size: 30px; margin: 0 0 6px; text-wrap: balance; }
+  .sub { color: var(--muted); font-size: 15px; margin: 0 0 26px; max-width: 62ch; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .grid { display: grid; gap: 20px; }
+  @media (min-width: 900px) { .grid.two { grid-template-columns: 420px minmax(0,1fr); align-items: start; } }
+  label.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  input[type=text], input[type=email], input[type=number], textarea, select {
+    width: 100%; background: var(--surface2); border: 1px solid var(--line2); border-radius: 9px;
+    color: var(--ink); font: 400 15px var(--body); padding: 10px 12px;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line2); background: transparent; color: var(--muted); font: 500 14px var(--body); cursor: pointer; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  .btn { min-height: 46px; border: none; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font: 600 15px var(--body); cursor: pointer; padding: 0 22px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn.ghost { background: transparent; border: 1px solid var(--line2); color: var(--ink); }
+  .hint { font-size: 12px; color: var(--faint); }
+  .form-stack { display: flex; flex-direction: column; gap: 16px; }
+  /* Ergebnis */
+  .gaugebox { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .verdict { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 8px 20px; font-weight: 700; font-size: 15px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; font-size: 12px; color: var(--faint); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 5px; }
+  .crit { display: grid; grid-template-columns: 200px minmax(0,1fr) 44px; gap: 14px; padding: 13px 0; border-top: 1px solid var(--line); align-items: start; }
+  @media (max-width: 700px) { .crit { grid-template-columns: 1fr 44px; } .crit .mid { grid-column: 1 / -1; } }
+  .crit b { font-size: 14px; }
+  .crit .w { font-size: 11px; color: var(--faint); font-weight: 400; display: block; }
+  .bar { height: 7px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
+  .bar i { display: block; height: 100%; border-radius: 99px; }
+  .crit p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .crit .num { font-family: var(--display); font-size: 19px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .capbox { border: 1px solid rgba(251,191,36,.3); background: rgba(251,191,36,.06); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--soft); line-height: 1.55; }
+  .fix { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--soft); line-height: 1.55; }
+  .fix i { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 99px; display: flex; align-items: center; justify-content: center; font: 700 13px var(--body); font-style: normal; }
+  .rw { border: 1px solid var(--line2); border-radius: 9px; padding: 10px 13px; font-size: 14px; margin-top: 8px; }
+  .rw.better { border-color: rgba(198,242,78,.4); background: rgba(198,242,78,.05); }
+  .rw small { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; color: var(--faint); margin-bottom: 3px; }
+  .rw.better small { color: var(--accent); }
+  h2 { font-family: var(--display); font-size: 18px; margin: 0 0 12px; }
+  h3 { font-family: var(--display); font-size: 15px; margin: 22px 0 8px; }
+  /* Parameter */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); padding: 8px 10px; }
+  td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: middle; }
+  td input[type=number] { width: 78px; padding: 7px 9px; font-variant-numeric: tabular-nums; }
+  .rowlabel { font-weight: 600; font-size: 14px; }
+  .rowdesc { font-size: 12px; color: var(--faint); max-width: 46ch; }
+  .paramnote { border: 1px solid rgba(198,242,78,.25); background: rgba(198,242,78,.05); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--soft); line-height: 1.6; margin-bottom: 20px; }
+  .sumline { font-size: 13px; color: var(--muted); padding: 10px; }
+  .modref { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .modref b { color: var(--ink); }
+  .hidden { display: none !important; }
+  .resultwrap { display: flex; flex-direction: column; gap: 20px; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .filelabel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 74px; border: 2px dashed var(--line2); border-radius: 11px; cursor: pointer; font-size: 13.5px; font-weight: 500; text-align: center; padding: 10px; }
+  .filelabel:hover { border-color: rgba(198,242,78,.5); }
+  #imgprev { max-height: 90px; border-radius: 8px; border: 1px solid var(--line); }
+  @media (prefers-reduced-motion: no-preference) { .bar i { transition: width .5s ease; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="logo">
+      <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="7" stroke="#C6F24E" stroke-width="2"></rect><path d="M7 16.5 L11 9 L14.5 14 L19 7.5" stroke="#C6F24E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Ads·Analyser <span style="color:var(--faint);font-weight:500;font-size:13px;">Testversion</span>
+    </span>
+    <nav class="tabs" aria-label="Bereiche">
+      <button class="tab active" id="tab-test" type="button">Testen</button>
+      <button class="tab" id="tab-params" type="button">Parameter</button>
+    </nav>
+  </header>
+
+  <!-- ================= TESTEN ================= -->
+  <section id="view-test">
+    <h1>Bekommt deine Ad einen Winner-Score?</h1>
+    <p class="sub">Diese Testversion läuft komplett in deinem Browser mit der deterministischen Demo-Engine — gleiche Kriterien, Gewichte und Hard-Caps wie die echte App, nur ohne KI-Bildanalyse. Unter „Parameter" kannst du alle Stellschrauben live verändern.</p>
+
+    <div class="grid two">
+      <div class="card form-stack">
+        <div class="toolbar">
+          <button class="btn ghost" type="button" id="loadExample">Beispiel-Ad laden</button>
+        </div>
+        <label class="field">Was verkaufst du?
+          <input type="text" id="f-product" placeholder="z.B. Bakuchiol-Serum für sensible Haut, CHF 89">
+        </label>
+        <label class="field">Deine Ad-Copy
+          <textarea id="f-copy" placeholder="Kopiere hier den Text deiner Anzeige rein …"></textarea>
+        </label>
+        <label class="field">CTA-Button
+          <input type="text" id="f-cta" placeholder="z.B. Jetzt shoppen">
+        </label>
+        <label class="filelabel">
+          <input type="file" id="f-img" accept="image/*" style="display:none">
+          <span id="imgtext">Creative dazulegen (Bild, optional)</span>
+          <img id="imgprev" class="hidden" alt="Creative-Vorschau">
+        </label>
+        <label class="field">Plattform
+          <span class="chips" id="c-platform"></span>
+        </label>
+        <label class="field">Kampagnenziel
+          <span class="chips" id="c-goal"></span>
+        </label>
+        <label class="field">Wichtigste Metrik
+          <span class="chips" id="c-metric"></span>
+        </label>
+        <label class="field">Funnel-Stufe
+          <span class="chips" id="c-funnel"></span>
+        </label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <label class="field">Angebots-Typ
+            <select id="f-offer">
+              <option value="product">Eigenes Produkt</option>
+              <option value="service">Service</option>
+              <option value="dropshipping">Dropshipping</option>
+            </select>
+          </label>
+          <label class="field">Preisklasse
+            <select id="f-price">
+              <option value="budget">günstig</option>
+              <option value="mid" selected>mittel</option>
+              <option value="premium">premium</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn" id="run" type="button" disabled>Analysieren →</button>
+        <span class="hint">Pflicht: Produkt (ab 6 Zeichen) und Copy (ab 10 Zeichen).</span>
+      </div>
+
+      <div class="resultwrap" id="result">
+        <div class="card" style="color:var(--muted);font-size:15px;line-height:1.6;">
+          Noch keine Analyse. Lade links das Beispiel oder gib deine eigene Ad ein — das Ergebnis erscheint hier: Score-Gauge, alle 8 Kriterien mit Begründung, Hard-Caps und die wichtigsten Fixes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PARAMETER ================= -->
+  <section id="view-params" class="hidden">
+    <h1>Parameter-Werkstatt</h1>
+    <p class="sub">Hier stellen wir gemeinsam die „Vorschriften" ein. Jede Änderung wird sofort auf die letzte Analyse angewendet (Tab „Testen") und in deinem Browser gespeichert.</p>
+
+    <div class="paramnote">
+      <b>So arbeiten wir damit:</b> Analysiere links eine typische Ad, wechsle hierher, verändere Gewichte oder Schwellen — und schau drüben, wie der Score reagiert. Wenn dir ein Satz Werte gefällt, sag mir die Zahlen und ich übernehme sie fest in die App (<code>framework.ts</code>).
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h2>1 · Kriterien-Gewichte</h2>
+      <table>
+        <thead><tr><th>Kriterium</th><th>Gewicht</th><th>Was geprüft wird</th></tr></thead>
+        <tbody id="weightRows"></tbody>
+      </table>
+      <div class="sumline" id="weightSum"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h2>2 · Verdict-Schwellen</h2>
+      <table>
+        <tbody>
+          <tr><td class="rowlabel" style="color:var(--win)">Winner ab</td><td><input type="number" id="t-winner" min="1" max="100"></td><td class="rowdesc">„Schalten — hohes Erfolgspotenzial."</td></tr>
+          <tr><td class="rowlabel" style="color:var(--solid)">Solide ab</td><td><input type="number" id="t-solid" min="1" max="100"></td><td class="rowdesc">„Schaltbar — mit den Top-Fixes wird mehr daraus."</td></tr>
+          <tr><td class="rowlabel" style="color:var(--warn)">Riskant ab</td><td><input type="number" id="t-risky" min="1" max="100"></td><td class="rowdesc">Darunter: Flop — „Nicht schalten, Budget sparen."</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h2>3 · Hard-Caps</h2>
+      <p class="rowdesc" style="margin:0 0 8px;">Schwere Einzel-Fehler deckeln den Gesamt-Score, egal wie gut der Rest ist.</p>
+      <table>
+        <thead><tr><th>Aktiv</th><th>Regel</th><th>Auslöser unter</th><th>Score max.</th></tr></thead>
+        <tbody id="capRows"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h2>4 · Vertrauensbereich</h2>
+      <label class="field" style="max-width:320px;">Band-Breite ± Punkte
+        <input type="number" id="t-band" min="0" max="15">
+      </label>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <h2>5 · Kontext-Modifikatoren (Referenz)</h2>
+      <p class="modref">
+        Diese Verschiebungen sind aktuell fest verdrahtet — Diskussionsgrundlage für unsere Abstimmung:<br><br>
+        <b>Ziel „Marke aufbauen":</b> CTA-Gewicht → 4, Hook +3, Visual +2, Vertrauen +1<br>
+        <b>Ziel „Leads":</b> CTA +2, Vertrauen +1, Policy −1, Visual −2<br>
+        <b>Metrik Impressionen/Bekanntheit:</b> Hook +2, Visual +1, CTA −3<br>
+        <b>Metrik Sales:</b> CTA +2, Vertrauen +1, Hook −2, Visual −1<br>
+        <b>Metrik Add-to-Cart:</b> Klarheit +2, Visual +1, Vertrauen −2, Policy −1<br>
+        <b>Metrik Checkout:</b> Vertrauen +3, CTA +1, Hook −3, Visual −1<br>
+        <b>Funnel-Stufe & Angebots-Typ</b> wirken auf die Einzel-Bewertung (z.B. Cold erwartet Erklärung + Proof; Dropshipping ohne Proof verliert Vertrauen; Premium mit Rabatt-Signalen verliert Visual).
+      </p>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn ghost" id="resetParams" type="button">Auf Standardwerte zurücksetzen</button>
+      <span class="hint" id="saveState"></span>
+    </div>
+  </section>
+</div>
+
+<script>
+"use strict";
+// ============ Framework (Spiegel von src/lib/scoring) ============
+const CRITERIA = [
+  { key: "hook", label: "Hook / Scroll-Stopper", w: 20, desc: "Stoppt die Ad den Daumen in unter einer Sekunde?" },
+  { key: "clarity", label: "Botschafts-Klarheit", w: 15, desc: "Versteht man in 3 Sekunden, was angeboten wird und für wen?" },
+  { key: "audience_fit", label: "Zielgruppen-/Funnel-Fit", w: 15, desc: "Passt die Ansprache zur Funnel-Stufe und zum Awareness-Level?" },
+  { key: "copywriting", label: "Copywriting-Qualität", w: 15, desc: "Struktur Hook→Problem→Lösung→Proof→CTA, Nutzen statt Wir-Fokus." },
+  { key: "cta", label: "CTA-Stärke", w: 10, desc: "Klare Handlungsaufforderung, konsistent mit dem Ziel-Event." },
+  { key: "visual", label: "Visuelle Qualität & Native-Optik", w: 10, desc: "Plattformgerecht, nativ statt Werbe-Optik." },
+  { key: "trust", label: "Vertrauen & Social Proof", w: 8, desc: "Bewertungen, Zahlen, Garantien, echte Stimmen." },
+  { key: "policy", label: "Plattform-Konformität & Policy", w: 7, desc: "Keine unbelegten Versprechen oder Policy-Fallen." },
+];
+const CAP_DEFS = [
+  { id: "policy", label: "Schweres Policy-Risiko", crit: "policy", trigger: 30, cap: 40, desc: "Ad wird wahrscheinlich abgelehnt oder gefährdet das Konto." },
+  { id: "cta", label: "Fehlender CTA bei Sales/Leads-Ziel", crit: "cta", trigger: 25, cap: 60, desc: "Gilt nur bei Ziel Verkauf oder Leads." },
+  { id: "hook", label: "Kein erkennbarer Hook", crit: "hook", trigger: 20, cap: 50, desc: "Die Ad wird im Feed übersprungen, bevor der Rest wirkt." },
+  { id: "fit", label: "Ansprache passt nicht zur Funnel-Stufe", crit: "audience_fit", trigger: 20, cap: 55, desc: "Z.B. Kaltakquise-Ton für Bestandskunden." },
+];
+const DEFAULT_PARAMS = {
+  weights: Object.fromEntries(CRITERIA.map(c => [c.key, c.w])),
+  thresholds: { winner: 75, solid: 55, risky: 35 },
+  caps: Object.fromEntries(CAP_DEFS.map(c => [c.id, { on: true, trigger: c.trigger, cap: c.cap }])),
+  band: 4,
+};
+let params = loadParams();
+function loadParams() {
+  try {
+    const raw = localStorage.getItem("adsanalyser.demo.params");
+    if (raw) { const p = JSON.parse(raw); return { ...structuredClone(DEFAULT_PARAMS), ...p, caps: { ...structuredClone(DEFAULT_PARAMS.caps), ...(p.caps||{}) } }; }
+  } catch (e) {}
+  return structuredClone(DEFAULT_PARAMS);
+}
+function saveParams() {
+  try { localStorage.setItem("adsanalyser.demo.params", JSON.stringify(params)); setSaveState("Gespeichert ✓"); }
+  catch (e) { setSaveState("Speichern nicht möglich — gilt nur für diese Sitzung"); }
+}
+function setSaveState(t) { document.getElementById("saveState").textContent = t; }
+
+function effectiveWeights(goal, metric) {
+  const w = { ...params.weights };
+  if (goal === "brand") { w.cta = 4; w.hook += 3; w.visual += 2; w.trust += 1; }
+  if (goal === "leads") { w.cta += 2; w.trust += 1; w.policy -= 1; w.visual -= 2; }
+  if (metric === "impressions" || metric === "awareness") { w.hook += 2; w.visual += 1; w.cta = Math.max(3, w.cta - 3); }
+  if (metric === "sales") { w.cta += 2; w.trust += 1; w.hook -= 2; w.visual -= 1; }
+  if (metric === "add_to_cart") { w.clarity += 2; w.visual += 1; w.policy -= 1; w.trust -= 2; }
+  if (metric === "checkout") { w.trust += 3; w.cta += 1; w.hook -= 3; w.visual -= 1; }
+  const sum = Object.values(w).reduce((a, b) => a + b, 0);
+  for (const k in w) w[k] = w[k] / sum * 100;
+  return w;
+}
+
+// ============ Demo-Scorer (Spiegel von demo.ts) ============
+const SIG = {
+  ctaBuy: ["jetzt kaufen","jetzt shoppen","jetzt bestellen","shop now","buy now","jetzt sichern","zum angebot"],
+  ctaLead: ["jetzt sichern","gratis","kostenlos","termin","anfragen","mehr erfahren","download","eintragen","buchen"],
+  hook: ["?","du ","dein","stopp","endlich","schluss","warum","geheim","fehler","niemand","stell dir vor","kennst du"],
+  proof: ["bewertung","sterne","★","kunden","erfahrung","review","getestet","studie","garantie","geld-zurück"],
+  urgency: ["nur noch","heute","limitiert","endet","letzte chance","solange","rabatt","%"],
+  risky: ["heilt","garantiert abnehmen","jünger","wunder","sofort reich","ohne risiko","100%","nie wieder"],
+  discount: ["rabatt","%","sale","deal","billig","gratis"],
+};
+const clamp = n => Math.max(5, Math.min(96, Math.round(n)));
+function jitter(seed, key, range) {
+  range = range || 6; let h = 0; const s = seed + key;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return (Math.abs(h) % (range * 2 + 1)) - range;
+}
+const hits = (t, arr) => arr.filter(n => t.includes(n)).length;
+
+function scoreAd(input) {
+  const all = (input.copy + " " + input.cta).toLowerCase();
+  const head = input.copy.slice(0, 130).toLowerCase();
+  const seed = all + input.platform + input.funnel + input.goal + input.metric;
+  const words = all.trim().split(/\s+/).filter(Boolean).length;
+  const proof = hits(all, SIG.proof), urgency = hits(all, SIG.urgency), explains = words > 40;
+
+  let hook = 45 + hits(head, SIG.hook) * 9 + jitter(seed, "hook");
+  if (input.platform === "tiktok" && !input.hasImage) hook -= 4;
+
+  let clarity = 62 + jitter(seed, "clarity");
+  if (words < 8) clarity -= 18; if (words > 160) clarity -= 12;
+  if (input.product.length > 40) clarity += 4;
+
+  let fit = 55 + jitter(seed, "fit");
+  if (input.funnel === "cold") fit += (explains ? 8 : -8) + proof * 4 + (urgency > 1 ? -6 : 0);
+  else if (input.funnel === "retargeting") fit += urgency * 6 + (explains ? -6 : 6);
+  else fit += (urgency > 1 ? -10 : 4) + (hits(all, ["neu","exklusiv","danke","community","vip"]) ? 8 : -4);
+
+  let copy = 50 + proof * 4 + jitter(seed, "copy");
+  if (words >= 25 && words <= 120) copy += 8;
+  if (hits(all, ["wir sind","unser unternehmen","seit 19","seit 20"]) > 0) copy -= 8;
+  if ((all.match(/!/g) || []).length > 3) copy -= 6;
+
+  const wantsBuy = input.goal === "sales";
+  let cta = 30 + jitter(seed, "cta");
+  const hasBuy = hits(all, SIG.ctaBuy) > 0, hasLead = hits(all, SIG.ctaLead) > 0;
+  if (input.cta.trim()) cta += 18;
+  if (wantsBuy && hasBuy) cta += 28;
+  if (wantsBuy && !hasBuy && hasLead) cta += 8;
+  if (input.goal === "leads" && hasLead) cta += 26;
+  if (input.goal === "brand") cta = 60 + (input.cta ? 10 : 0);
+
+  let visual = 58 + jitter(seed, "visual");
+  if (input.hasImage) visual += 8;
+  if (input.platform === "tiktok" && !input.hasImage) visual -= 6;
+  if (input.price === "premium" && hits(all, SIG.discount) > 1) visual -= 10;
+
+  let trust = 38 + proof * 12 + hits(all, ["garantie","geld-zurück","rückgabe"]) * 8 + jitter(seed, "trust");
+  if (input.offer === "dropshipping" && proof === 0) trust -= 12;
+  if (input.offer === "service" && hits(all, ["ergebnis","kunden","referenz","fallstudie"]) === 0) trust -= 8;
+
+  const risky = hits(all, SIG.risky);
+  let policy = 82 - risky * 24 + jitter(seed, "policy", 4);
+  if (input.platform === "tiktok" && hits(all, ["vorher","nachher","abnehmen"]) > 0) policy -= 15;
+
+  const scores = { hook: clamp(hook), clarity: clamp(clarity), audience_fit: clamp(fit), copywriting: clamp(copy), cta: clamp(cta), visual: clamp(visual), trust: clamp(trust), policy: clamp(policy) };
+
+  const R = {
+    hook: scores.hook >= 65 ? "Der Einstieg hat erkennbare Stopper-Elemente (direkte Ansprache/Frage)." : "Der Einstieg ist austauschbar — kein Pattern-Interrupt, der im Feed stoppt.",
+    clarity: scores.clarity >= 65 ? "Angebot und Zielgruppe sind schnell erfassbar." : (words < 8 ? "Zu wenig Substanz — unklar, was genau angeboten wird." : "Die Botschaft verliert sich — ein Angebot, ein Versprechen, der Rest fliegt raus."),
+    audience_fit: scores.audience_fit >= 65 ? "Ansprache passt zur gewählten Funnel-Stufe." : (input.funnel === "cold" ? "Für Cold Audience fehlt Erklärung oder Beleg — das Publikum kennt dich noch nicht." : input.funnel === "retargeting" ? "Für Retargeting fehlt der Anstoss: Einwand-Behandlung oder ein Grund, jetzt zurückzukommen." : "Für Bestandskunden wirkt die Ansprache wie Kaltakquise."),
+    copywriting: scores.copywriting >= 65 ? "Struktur und Länge stimmen, Nutzen steht im Vordergrund." : "Keine klare Struktur (Hook→Problem→Lösung→Proof→CTA) oder Wir-Fokus statt Kunde.",
+    cta: scores.cta >= 65 ? "Der CTA passt zum Ziel-Event." : (wantsBuy ? "Der CTA ist zu weich für ein Sales-Ziel — er muss zum Kauf führen." : "Der CTA ist unklar oder fehlt."),
+    visual: scores.visual >= 65 ? "Creative-Setup passt zur Plattform." : (input.platform === "tiktok" ? "Für TikTok zu wenig nativ — UGC-Look und Bewegung schlagen Studio-Optik." : "Mehr Kontrast/Lesbarkeit für den mobilen Feed nötig."),
+    trust: scores.trust >= 65 ? "Vertrauens-Elemente (Proof/Garantie) sind vorhanden." : "Es fehlen Belege: Bewertungen, Zahlen, Garantie oder echte Kundenstimmen.",
+    policy: scores.policy >= 65 ? "Keine offensichtlichen Policy-Risiken erkannt." : "Formulierungen mit Ablehnungsrisiko erkannt — unbelegte Versprechen entschärfen.",
+  };
+  return { scores, reasons: R };
+}
+
+function aggregate(input, scores) {
+  const w = effectiveWeights(input.goal, input.metric);
+  let total = 0;
+  for (const k in scores) total += scores[k] * w[k] / 100;
+  const caps = [];
+  for (const def of CAP_DEFS) {
+    const p = params.caps[def.id];
+    if (!p.on) continue;
+    if (def.id === "cta" && input.goal === "brand") continue;
+    if (scores[def.crit] < p.trigger) caps.push({ ...def, capValue: p.cap });
+  }
+  let capped = total;
+  for (const c of caps) capped = Math.min(capped, c.capValue);
+  const score = Math.round(Math.max(0, Math.min(100, capped)));
+  const t = params.thresholds;
+  const verdict = score >= t.winner ? "winner" : score >= t.solid ? "solid" : score >= t.risky ? "risky" : "flop";
+  return { score, verdict, caps, weights: w };
+}
+
+const VERDICT = {
+  winner: { label: "WINNER", advice: "Schalten — hohes Erfolgspotenzial.", color: "var(--win)" },
+  solid: { label: "SOLIDE", advice: "Schaltbar — mit den Top-Fixes wird mehr daraus.", color: "var(--solid)" },
+  risky: { label: "RISKANT", advice: "Erst die kritischen Punkte fixen, dann testen.", color: "var(--warn)" },
+  flop: { label: "FLOP", advice: "Nicht schalten — Budget sparen und neu ansetzen.", color: "var(--flop)" },
+};
+const scoreColor = s => s >= params.thresholds.winner ? "var(--win)" : s >= params.thresholds.solid ? "var(--solid)" : s >= params.thresholds.risky ? "var(--warn)" : "var(--flop)";
+
+// ============ UI-State ============
+const state = { platform: "meta", goal: "sales", metric: "sales", funnel: "cold", hasImage: false };
+let lastInput = null, lastScoring = null;
+
+function chipRow(el, options, key, onChange) {
+  const box = document.getElementById(el);
+  box.innerHTML = "";
+  for (const [value, label] of options) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip" + (state[key] === value ? " active" : ""); b.textContent = label;
+    b.onclick = () => { state[key] = value; chipRow(el, options, key, onChange); if (onChange) onChange(); };
+    box.appendChild(b);
+  }
+}
+function renderChips() {
+  chipRow("c-platform", [["meta","Meta (FB/IG)"],["tiktok","TikTok"]], "platform");
+  chipRow("c-goal", [["sales","Verkaufen"],["leads","Leads"],["brand","Marke aufbauen"]], "goal", () => {
+    state.metric = state.goal === "brand" ? "awareness" : "sales"; renderChips();
+  });
+  chipRow("c-metric", [["impressions","Impressionen"],["sales","Sales"],["add_to_cart","Add-to-Cart"],["checkout","Checkout"],["awareness","Bekanntheit"]], "metric");
+  chipRow("c-funnel", [["cold","Cold / Neu"],["retargeting","Retargeting"],["customers","Bestandskunden"]], "funnel");
+}
+renderChips();
+
+const $ = id => document.getElementById(id);
+function validate() {
+  $("run").disabled = !($("f-product").value.trim().length > 5 && $("f-copy").value.trim().length > 10);
+}
+$("f-product").addEventListener("input", validate);
+$("f-copy").addEventListener("input", validate);
+
+$("f-img").addEventListener("change", e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    $("imgprev").src = reader.result; $("imgprev").classList.remove("hidden");
+    $("imgtext").textContent = "Creative geladen — ersetzen?";
+    state.hasImage = true;
+  };
+  reader.readAsDataURL(file);
+});
+
+$("loadExample").onclick = () => {
+  $("f-product").value = "Bakuchiol-Serum für sensible Haut, CHF 89 — wirkt wie Retinol, ohne Reizung";
+  $("f-copy").value = "Ich habe 3 Jahre alles probiert. Retinol? Rötungen. Drogerie? Nichts. Dann kam Bakuchiol — sichtbar glattere Haut in 4 Wochen. 2100 Bewertungen mit 4.8 Sternen. 30 Tage Geld-zurück-Garantie.";
+  $("f-cta").value = "Jetzt shoppen";
+  validate();
+};
+
+$("run").onclick = () => {
+  lastInput = {
+    product: $("f-product").value.trim(),
+    copy: $("f-copy").value.trim(),
+    cta: $("f-cta").value.trim(),
+    platform: state.platform, goal: state.goal, metric: state.metric, funnel: state.funnel,
+    offer: $("f-offer").value, price: $("f-price").value, hasImage: state.hasImage,
+  };
+  lastScoring = scoreAd(lastInput);
+  renderResult();
+};
+
+function gaugeSvg(score, color) {
+  const arc = Math.PI * 96;
+  return '<svg width="240" height="150" viewBox="0 0 240 150" role="img" aria-label="Winner-Score ' + score + ' Prozent">' +
+    '<path d="M 24 132 A 96 96 0 0 1 216 132" fill="none" stroke="#1A1F2B" stroke-width="17" stroke-linecap="round"></path>' +
+    '<path d="M 24 132 A 96 96 0 0 1 216 132" fill="none" stroke="' + color + '" stroke-width="17" stroke-linecap="round" stroke-dasharray="' + (arc * score / 100) + ' ' + (arc + 12) + '"></path>' +
+    '<text x="120" y="108" text-anchor="middle" fill="#EAEEF6" font-family="Space Grotesk,sans-serif" font-size="46" font-weight="700">' + score + '%</text>' +
+    '<text x="120" y="132" text-anchor="middle" fill="#8A93A6" font-size="13">Winner-Score</text></svg>';
+}
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function renderResult() {
+  if (!lastInput || !lastScoring) return;
+  const { scores, reasons } = lastScoring;
+  const agg = aggregate(lastInput, scores);
+  const v = VERDICT[agg.verdict];
+  const band = params.band;
+  const lo = Math.max(0, agg.score - band), hi = Math.min(100, agg.score + band);
+
+  const worst = Object.entries(scores).sort((a, b) => a[1] - b[1]).slice(0, 3);
+  const fixTitle = { hook: "Hook schärfen", clarity: "Botschaft fokussieren", audience_fit: "Ansprache an Funnel-Stufe anpassen", copywriting: "Copy-Struktur aufbauen", cta: "CTA aufs Ziel-Event ausrichten", visual: "Creative plattformgerecht machen", trust: "Social Proof ergänzen", policy: "Riskante Claims entschärfen" };
+  const fixColors = ["var(--flop)", "var(--warn)", "var(--muted)"];
+
+  const rewriteCta = lastInput.goal === "sales" ? "Jetzt shoppen — 30 Tage risikofrei testen" : lastInput.goal === "leads" ? "Jetzt gratis sichern" : (lastInput.product.split(/[,.]/)[0] + " entdecken");
+
+  let html = '<div class="card gaugebox">' + gaugeSvg(agg.score, v.color) +
+    '<span class="hint">Vertrauensbereich ' + lo + '–' + hi + ' %</span>' +
+    '<span class="verdict" style="background:color-mix(in srgb,' + v.color + ' 14%,transparent);color:' + v.color + '">' + v.label + ' — ' + v.advice + '</span>' +
+    '<span class="legend">' +
+      '<span><i style="background:var(--win)"></i>Winner ≥ ' + params.thresholds.winner + '</span>' +
+      '<span><i style="background:var(--solid)"></i>Solide ' + params.thresholds.solid + '–' + (params.thresholds.winner - 1) + '</span>' +
+      '<span><i style="background:var(--warn)"></i>Riskant ' + params.thresholds.risky + '–' + (params.thresholds.solid - 1) + '</span>' +
+      '<span><i style="background:var(--flop)"></i>Flop &lt; ' + params.thresholds.risky + '</span></span></div>';
+
+  if (agg.caps.length) {
+    html += '<div class="capbox"><b style="color:var(--warn)">Hard-Cap aktiv:</b> ' + agg.caps.map(c => esc(c.label) + " (Score max. " + c.capValue + ")").join(" · ") + '</div>';
+  }
+
+  html += '<div class="card"><h2>Bewertung nach Kriterien</h2>';
+  for (const c of CRITERIA) {
+    const s = scores[c.key];
+    html += '<div class="crit"><span><b>' + c.label + '</b><span class="w">Gewicht ' + agg.weights[c.key].toFixed(1) + ' %</span></span>' +
+      '<span class="mid"><span class="bar"><i style="width:' + s + '%;background:' + scoreColor(s) + '"></i></span><p>' + esc(reasons[c.key]) + '</p></span>' +
+      '<span class="num" style="color:' + scoreColor(s) + '">' + s + '</span></div>';
+  }
+  html += '</div>';
+
+  html += '<div class="card"><h2>Priorisierte Fixes</h2>';
+  worst.forEach(([key], i) => {
+    html += '<div class="fix" style="margin-bottom:10px;"><i style="background:color-mix(in srgb,' + fixColors[i] + ' 16%,transparent);color:' + fixColors[i] + '">' + (i + 1) + '</i><span><b style="color:var(--ink)">' + fixTitle[key] + '.</b> ' + esc(reasons[key]) + '</span></div>';
+  });
+  html += '<h3>Copy-Rewrite · CTA</h3>' +
+    '<div class="rw"><small>ORIGINAL</small>' + esc(lastInput.cta || "(kein CTA)") + '</div>' +
+    '<div class="rw better"><small>VORSCHLAG</small>' + esc(rewriteCta) + '</div></div>';
+
+  $("result").innerHTML = html;
+}
+
+// ============ Parameter-UI ============
+function renderParams() {
+  const rows = $("weightRows"); rows.innerHTML = "";
+  for (const c of CRITERIA) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = '<td class="rowlabel">' + c.label + '</td><td></td><td class="rowdesc">' + c.desc + '</td>';
+    const inp = document.createElement("input");
+    inp.type = "number"; inp.min = "0"; inp.max = "60"; inp.value = params.weights[c.key];
+    inp.addEventListener("input", () => {
+      params.weights[c.key] = Math.max(0, Number(inp.value) || 0);
+      updateWeightSum(); saveParams(); renderResult();
+    });
+    tr.children[1].appendChild(inp);
+    rows.appendChild(tr);
+  }
+  updateWeightSum();
+
+  $("t-winner").value = params.thresholds.winner;
+  $("t-solid").value = params.thresholds.solid;
+  $("t-risky").value = params.thresholds.risky;
+  for (const id of ["winner", "solid", "risky"]) {
+    $("t-" + id).oninput = e => { params.thresholds[id] = Number(e.target.value) || 0; saveParams(); renderResult(); };
+  }
+
+  const capRows = $("capRows"); capRows.innerHTML = "";
+  for (const def of CAP_DEFS) {
+    const p = params.caps[def.id];
+    const tr = document.createElement("tr");
+    tr.innerHTML = '<td></td><td><span class="rowlabel">' + def.label + '</span><br><span class="rowdesc">' + def.desc + '</span></td><td></td><td></td>';
+    const chk = document.createElement("input"); chk.type = "checkbox"; chk.checked = p.on;
+    chk.onchange = () => { p.on = chk.checked; saveParams(); renderResult(); };
+    const trig = document.createElement("input"); trig.type = "number"; trig.min = "0"; trig.max = "100"; trig.value = p.trigger;
+    trig.oninput = () => { p.trigger = Number(trig.value) || 0; saveParams(); renderResult(); };
+    const cap = document.createElement("input"); cap.type = "number"; cap.min = "0"; cap.max = "100"; cap.value = p.cap;
+    cap.oninput = () => { p.cap = Number(cap.value) || 0; saveParams(); renderResult(); };
+    tr.children[0].appendChild(chk); tr.children[2].appendChild(trig); tr.children[3].appendChild(cap);
+    capRows.appendChild(tr);
+  }
+
+  $("t-band").value = params.band;
+  $("t-band").oninput = e => { params.band = Number(e.target.value) || 0; saveParams(); renderResult(); };
+}
+function updateWeightSum() {
+  const sum = Object.values(params.weights).reduce((a, b) => a + b, 0);
+  $("weightSum").textContent = "Summe: " + sum + " — wird automatisch auf 100 % normalisiert" + (sum === 100 ? " ✓" : " (aktuell " + sum + ")");
+}
+$("resetParams").onclick = () => {
+  params = structuredClone(DEFAULT_PARAMS);
+  saveParams(); renderParams(); renderResult();
+};
+renderParams();
+
+// ============ Tabs ============
+function showTab(which) {
+  $("view-test").classList.toggle("hidden", which !== "test");
+  $("view-params").classList.toggle("hidden", which !== "params");
+  $("tab-test").classList.toggle("active", which === "test");
+  $("tab-params").classList.toggle("active", which === "params");
+}
+$("tab-test").onclick = () => showTab("test");
+$("tab-params").onclick = () => showTab("params");
+</script>
