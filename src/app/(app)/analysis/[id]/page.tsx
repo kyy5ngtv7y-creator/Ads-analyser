@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReportGate from "@/components/ReportGate";
 import { Card, ScoreBar, ScoreGauge, VerdictBadge, scoreColor, tint } from "@/components/ui";
 import { CRITERIA, VERDICT_META } from "@/lib/scoring/framework";
-import { getAnalysis, type StoredAnalysis } from "@/lib/store";
+import { getAnalysis, getLead, type StoredAnalysis } from "@/lib/store";
 import type { PlatformAnalysis } from "@/lib/types";
 
 const CRITERIA_LABEL = new Map(CRITERIA.map((c) => [c.key, c.label]));
@@ -14,11 +15,13 @@ export default function AnalysisPage() {
   const params = useParams<{ id: string }>();
   const [analysis, setAnalysis] = useState<StoredAnalysis | null | undefined>(undefined);
   const [activePlatform, setActivePlatform] = useState<string>("");
+  const [gateLocked, setGateLocked] = useState(false);
 
   useEffect(() => {
     const a = getAnalysis(params.id);
     setAnalysis(a ?? null);
     if (a) setActivePlatform(a.results[0].platform);
+    setGateLocked(!getLead());
   }, [params.id]);
 
   if (analysis === undefined) return <div className="p-10 text-muted">Lade …</div>;
@@ -140,7 +143,9 @@ export default function AnalysisPage() {
         </div>
       </div>
 
-      {/* Criteria */}
+      {/* Criteria + Details (E-Mail-Gate für neue Besucher) */}
+      <ReportGate locked={gateLocked} onUnlock={() => setGateLocked(false)}>
+      <div className="flex flex-col gap-6">
       <Card className="flex flex-col p-6">
         <div className="flex items-center justify-between pb-3">
           <h2 className="font-display text-lg font-semibold">
@@ -207,6 +212,9 @@ export default function AnalysisPage() {
           ))}
         </Card>
       </div>
+
+      </div>
+      </ReportGate>
 
       <div className="flex gap-3">
         <Link href="/analyze" className="rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-accent-ink hover:opacity-90">

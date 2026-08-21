@@ -92,6 +92,22 @@ export function saveAngleSet(set: StoredAngleSet): void {
   write(KEYS.angles, [set, ...getAngleSets()].slice(0, 20));
 }
 
+// ---- Leads (E-Mail-Capture; Phase 2 sendet an Backend/CRM) ----
+export interface Lead {
+  email: string;
+  source: "report_gate" | "checkout";
+  plan?: string;
+  createdAt: string;
+}
+export function getLead(): Lead | null {
+  return read<Lead | null>("adsanalyser.lead", null);
+}
+export function saveLead(lead: Omit<Lead, "createdAt">): Lead {
+  const full: Lead = { ...lead, createdAt: new Date().toISOString() };
+  write("adsanalyser.lead", full);
+  return full;
+}
+
 // ---- Trial / Nutzung (MVP: clientseitig; Phase 4 ersetzt durch Stripe + Server) ----
 export interface Usage {
   trialStartedAt: string;

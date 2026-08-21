@@ -1,11 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { PLANS } from "@/lib/billing/plans";
-import { setPlan } from "@/lib/store";
 
-// MVP-Paywall: Planwahl wird lokal gespeichert; Phase 4 ersetzt die Buttons
-// durch Stripe-Checkout (siehe README).
+// Paywall führt direkt in den One-Page-Checkout (/checkout?plan=…).
 export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () => void; reason: string }) {
+  const router = useRouter();
   const paid = PLANS.filter((p) => p.id !== "trial");
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
@@ -65,10 +65,7 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
                 </ul>
                 <button
                   type="button"
-                  onClick={() => {
-                    setPlan(plan.id as "standard" | "pro" | "agency");
-                    onUpgraded();
-                  }}
+                  onClick={() => router.push(`/checkout?plan=${plan.id}`)}
                   className={`mt-auto rounded-lg py-3 text-[15px] font-semibold ${
                     highlight ? "bg-accent text-accent-ink hover:opacity-90" : "border border-line2 text-ink hover:bg-surface2"
                   }`}
@@ -80,8 +77,11 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
           })}
         </div>
         <p className="mt-5 text-center text-[13px] text-faint">
-          Monatlich kündbar · Preise in CHF inkl. MwSt. · Demo-Modus: Zahlung via Stripe folgt in Phase 4
+          Monatlich kündbar · 14 Tage Geld-zurück · Preise in CHF inkl. MwSt.
         </p>
+        <button type="button" onClick={onUpgraded} className="mx-auto mt-2 block text-[13px] text-faint underline-offset-2 hover:text-muted hover:underline">
+          Später entscheiden
+        </button>
       </div>
     </div>
   );

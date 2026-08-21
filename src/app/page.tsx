@@ -31,7 +31,7 @@ export default function LandingPage() {
           </a>
           <ThemeToggle className="hidden lg:flex" />
           <Link
-            href="/dashboard"
+            href="/start"
             className="rounded-lg bg-accent px-5 py-2.5 text-[15px] font-semibold text-accent-ink hover:opacity-90"
           >
             Gratis testen
@@ -54,7 +54,7 @@ export default function LandingPage() {
             berechnet aus 8 festen Kriterien — plus konkrete Fixes und bessere Copy-Varianten.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/analyze" className="rounded-xl bg-accent px-7 py-4 text-[17px] font-semibold text-accent-ink hover:opacity-90">
+            <Link href="/start" className="rounded-xl bg-accent px-7 py-4 text-[17px] font-semibold text-accent-ink hover:opacity-90">
               Ad jetzt gratis analysieren
             </Link>
             <span className="text-sm text-muted">3 Gratis-Analysen · 3 Tage voller Zugang · keine Kreditkarte</span>
@@ -205,7 +205,7 @@ export default function LandingPage() {
                   )}
                 </ul>
                 <Link
-                  href="/dashboard"
+                  href={plan.id === "trial" ? "/start" : `/checkout?plan=${plan.id}`}
                   className={`mt-auto rounded-lg py-3 text-center text-[15px] font-semibold ${
                     highlight ? "bg-accent text-accent-ink hover:opacity-90" : "border border-line2 text-ink hover:bg-surface2"
                   }`}
