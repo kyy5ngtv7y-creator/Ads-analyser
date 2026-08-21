@@ -78,6 +78,11 @@ export default function AnalysisPage() {
             <img src={analysis.input.creativePreview} alt="Creative" className="mb-2 max-h-40 rounded-lg border border-line object-contain" />
           )}
           <ScoreGauge score={active.totalScore} />
+          {active.scoreBand && (
+            <span className="text-[13px] text-faint">
+              Vertrauensbereich {active.scoreBand[0]}–{active.scoreBand[1]} %
+            </span>
+          )}
           <span
             className="flex items-center gap-2 rounded-full px-5 py-2 text-[15px] font-bold"
             style={{ background: tint(scoreColor(active.totalScore)), color: scoreColor(active.totalScore) }}

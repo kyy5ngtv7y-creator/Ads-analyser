@@ -163,7 +163,7 @@ export default function LandingPage() {
           <h2 className="font-display text-3xl font-bold">Erst ehrlich testen, dann entscheiden</h2>
           <p className="text-[17px] text-muted">3 Gratis-Analysen und 3 Tage voller Zugang — ohne Kreditkarte. Preise in CHF.</p>
         </div>
-        <div className="grid items-stretch gap-6 md:grid-cols-3">
+        <div className="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
           {PLANS.map((plan) => {
             const highlight = plan.id === "pro";
             return (
@@ -181,9 +181,14 @@ export default function LandingPage() {
                 <span className={`text-sm font-semibold tracking-wide ${highlight ? "text-accent-text" : "text-muted"}`}>
                   {plan.name.toUpperCase()}
                 </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-display text-[42px] font-bold">{plan.priceChf === 0 ? "0.–" : `${plan.priceChf}.–`}</span>
-                  {plan.priceChf > 0 && <span className="text-[15px] text-muted">/Monat</span>}
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-[42px] font-bold">{plan.priceChf === 0 ? "0.–" : `${plan.priceChf}.–`}</span>
+                    {plan.priceChf > 0 && <span className="text-[15px] text-muted">/Monat</span>}
+                  </div>
+                  {plan.yearlyMonthlyChf && (
+                    <span className="text-[12px] text-faint">Jährlich: {plan.yearlyMonthlyChf}.–/Monat (−20 %)</span>
+                  )}
                 </div>
                 <ul className="flex flex-col gap-2.5">
                   {plan.features.map((f) => (

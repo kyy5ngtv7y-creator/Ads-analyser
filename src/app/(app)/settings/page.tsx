@@ -42,7 +42,7 @@ export default function SettingsPage() {
         )}
       </Card>
 
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-5 md:grid-cols-3">
         {PLANS.filter((p) => p.id !== "trial").map((plan) => {
           const isCurrent = usage.plan === plan.id;
           const highlight = plan.id === "pro";
@@ -52,8 +52,13 @@ export default function SettingsPage() {
                 <span className={`text-sm font-bold tracking-wide ${highlight ? "text-accent-text" : "text-muted"}`}>
                   {plan.name.toUpperCase()}
                 </span>
-                <span className="font-display text-3xl font-bold">
-                  {plan.priceChf}.–<span className="text-sm font-normal text-muted">/Monat</span>
+                <span className="flex flex-col items-end">
+                  <span className="font-display text-3xl font-bold">
+                    {plan.priceChf}.–<span className="text-sm font-normal text-muted">/Monat</span>
+                  </span>
+                  {plan.yearlyMonthlyChf && (
+                    <span className="text-[12px] text-faint">Jährlich: {plan.yearlyMonthlyChf}.–/Mt. (−20 %)</span>
+                  )}
                 </span>
               </div>
               <ul className="flex flex-col gap-2 text-sm text-soft">
@@ -69,7 +74,7 @@ export default function SettingsPage() {
               ) : (
                 <PrimaryButton
                   onClick={() => {
-                    setUsage(setPlan(plan.id as "standard" | "pro"));
+                    setUsage(setPlan(plan.id as "standard" | "pro" | "agency"));
                   }}
                 >
                   {plan.name} wählen

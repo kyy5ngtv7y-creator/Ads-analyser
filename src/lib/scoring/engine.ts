@@ -20,9 +20,12 @@ function toPlatformAnalysis(input: AdInput, platform: PlatformAnalysis["platform
     .sort((a, b) => (order.get(a.key) ?? 0) - (order.get(b.key) ?? 0));
 
   const { totalScore, verdict, appliedCaps } = aggregate(input, criteria);
+  // Band statt Scheinpräzision: LLM-Teilscores schwanken zwischen Läufen leicht.
+  const halfBand = 4;
   return {
     platform,
     totalScore,
+    scoreBand: [Math.max(0, totalScore - halfBand), Math.min(100, totalScore + halfBand)] as [number, number],
     verdict,
     criteria,
     appliedCaps,

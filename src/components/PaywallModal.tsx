@@ -9,7 +9,7 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
   const paid = PLANS.filter((p) => p.id !== "trial");
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-[760px] rounded-2xl border border-line2 bg-elevated p-8 shadow-[var(--modal-shadow)]">
+      <div className="max-h-full w-full max-w-[1020px] overflow-y-auto rounded-2xl border border-line2 bg-elevated p-8 shadow-[var(--modal-shadow)]">
         <div className="flex flex-col items-center gap-2.5 text-center">
           <svg width="40" height="40" viewBox="0 0 22 22" fill="none" aria-hidden>
             <rect x="4" y="9" width="14" height="9" rx="2" style={{ stroke: "var(--accent-text)" }} strokeWidth="1.8" />
@@ -21,7 +21,7 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
             Du hast gesehen, wie das Tool bewertet. Wähle jetzt deinen Plan — je mehr du testest, desto günstiger wird jede Analyse.
           </p>
         </div>
-        <div className="mt-7 grid gap-5 md:grid-cols-2">
+        <div className="mt-7 grid gap-5 md:grid-cols-3">
           {paid.map((plan) => {
             const highlight = plan.id === "pro";
             return (
@@ -39,9 +39,14 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
                 <span className={`text-[13px] font-bold tracking-wide ${highlight ? "text-accent-text" : "text-muted"}`}>
                   {plan.name.toUpperCase()}
                 </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-display text-4xl font-bold">{plan.priceChf}.–</span>
-                  <span className="text-[15px] text-muted">/Monat</span>
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-4xl font-bold">{plan.priceChf}.–</span>
+                    <span className="text-[15px] text-muted">/Monat</span>
+                  </div>
+                  {plan.yearlyMonthlyChf && (
+                    <span className="text-[12px] text-faint">Jährlich: {plan.yearlyMonthlyChf}.–/Monat (−20 %)</span>
+                  )}
                 </div>
                 <div
                   className={`flex items-center justify-between rounded-lg border px-3.5 py-2.5 text-sm ${
@@ -61,7 +66,7 @@ export default function PaywallModal({ onUpgraded, reason }: { onUpgraded: () =>
                 <button
                   type="button"
                   onClick={() => {
-                    setPlan(plan.id as "standard" | "pro");
+                    setPlan(plan.id as "standard" | "pro" | "agency");
                     onUpgraded();
                   }}
                   className={`mt-auto rounded-lg py-3 text-[15px] font-semibold ${

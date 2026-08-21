@@ -90,6 +90,8 @@ export interface CopyRewrite {
 export interface PlatformAnalysis {
   platform: Platform;
   totalScore: number;
+  /** Vertrauensbereich statt Scheinpräzision, z. B. [74, 82]. */
+  scoreBand?: [number, number];
   verdict: Verdict;
   criteria: CriterionResult[];
   appliedCaps: string[];

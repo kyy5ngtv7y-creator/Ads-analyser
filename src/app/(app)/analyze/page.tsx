@@ -152,13 +152,17 @@ function AnalyzeWizard() {
   const startAnalysis = async () => {
     const usage = getUsage();
     const state = trialState(usage);
-    if (state.blocked) {
+    // Jede bewertete Plattform zählt als eine Analyse.
+    const cost = platforms.length;
+    if (state.blocked || state.analysesLeft < cost) {
       setPaywallReason(
         usage.plan === "trial"
-          ? state.analysesLeft <= 0
-            ? "Deine 3 Gratis-Analysen sind aufgebraucht"
-            : "Dein 3-Tage-Trial ist abgelaufen"
-          : "Dein Monats-Kontingent ist aufgebraucht"
+          ? state.daysLeft <= 0
+            ? "Dein 3-Tage-Trial ist abgelaufen"
+            : "Deine 3 Gratis-Analysen sind aufgebraucht"
+          : state.analysesLeft < cost && state.analysesLeft > 0
+            ? `Noch ${state.analysesLeft} Analyse übrig — diese Bewertung braucht ${cost}`
+            : "Dein Monats-Kontingent ist aufgebraucht"
       );
       setShowPaywall(true);
       return;
@@ -191,7 +195,7 @@ function AnalyzeWizard() {
       if (!res.ok) throw new Error(data.error || "Analyse fehlgeschlagen.");
       const result = data as AnalysisResult;
       saveAnalysis({ ...result, projectId: projectId || undefined });
-      recordAnalysisUse();
+      recordAnalysisUse(platforms.length);
       router.push(`/analysis/${result.id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Analyse fehlgeschlagen.");
@@ -273,7 +277,7 @@ function AnalyzeWizard() {
                 </Field>
               </>
             )}
-            <Field label="Plattform(en)" hint="Beide gewählt = zwei Scores nebeneinander plus Vergleich.">
+            <Field label="Plattform(en)" hint="Beide gewählt = zwei Scores plus Vergleich; verbraucht 2 Analysen vom Kontingent.">
               <div className="flex gap-2.5">
                 <Chip active={platforms.includes("meta")} onClick={() => togglePlatform("meta")}>
                   Meta (FB/IG)

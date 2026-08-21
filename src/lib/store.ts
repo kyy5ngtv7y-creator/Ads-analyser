@@ -4,7 +4,7 @@
 // Phase 2 ersetzt diese Schicht durch Supabase (siehe README + db/schema.sql).
 
 import type { AnalysisResult, AngleSuggestion, Persona, Project } from "./types";
-import { TRIAL_ANALYSES, TRIAL_DAYS } from "./billing/plans";
+import { planById, TRIAL_DAYS } from "./billing/plans";
 
 const KEYS = {
   projects: "adsanalyser.projects",
@@ -96,7 +96,7 @@ export function saveAngleSet(set: StoredAngleSet): void {
 export interface Usage {
   trialStartedAt: string;
   analysesUsed: number;
-  plan: "trial" | "standard" | "pro";
+  plan: "trial" | "standard" | "pro" | "agency";
 }
 export function getUsage(): Usage {
   const usage = read<Usage | null>(KEYS.usage, null);
@@ -105,9 +105,10 @@ export function getUsage(): Usage {
   write(KEYS.usage, fresh);
   return fresh;
 }
-export function recordAnalysisUse(): Usage {
+/** Eine Analyse pro bewerteter Plattform — "beide" verbraucht 2. */
+export function recordAnalysisUse(count = 1): Usage {
   const usage = getUsage();
-  const next = { ...usage, analysesUsed: usage.analysesUsed + 1 };
+  const next = { ...usage, analysesUsed: usage.analysesUsed + Math.max(1, count) };
   write(KEYS.usage, next);
   return next;
 }
@@ -117,12 +118,12 @@ export function setPlan(plan: Usage["plan"]): Usage {
   return next;
 }
 export function trialState(usage: Usage): { daysLeft: number; analysesLeft: number; blocked: boolean } {
+  const limit = planById(usage.plan).analysesPerMonth;
+  const analysesLeft = Math.max(0, limit - usage.analysesUsed);
   if (usage.plan !== "trial") {
-    const limit = usage.plan === "pro" ? 240 : 20;
-    return { daysLeft: Infinity, analysesLeft: Math.max(0, limit - usage.analysesUsed), blocked: usage.analysesUsed >= limit };
+    return { daysLeft: Infinity, analysesLeft, blocked: analysesLeft <= 0 };
   }
   const started = new Date(usage.trialStartedAt).getTime();
   const daysLeft = Math.max(0, TRIAL_DAYS - Math.floor((Date.now() - started) / 86400000));
-  const analysesLeft = Math.max(0, TRIAL_ANALYSES - usage.analysesUsed);
   return { daysLeft, analysesLeft, blocked: daysLeft <= 0 || analysesLeft <= 0 };
 }
