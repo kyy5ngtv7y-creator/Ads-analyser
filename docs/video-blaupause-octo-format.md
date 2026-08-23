@@ -120,6 +120,51 @@ matches the opening living-room warmth so the video loops seamlessly. No text.
 5. Kommentar-Köder pinnen: „An welche Mama denkst du gerade? 👀"
 6. **Pflicht:** Instagram/TikTok-Label „KI-generiert" aktivieren, wenn Shots KI-generiert sind (Plattform-Pflicht für realistische KI-Inhalte; Nicht-Kennzeichnung riskiert Reichweiten-Drossel/Sperre). Zusätzlich gilt: Wer das Video als echten Produktbeweis verkauft, obwohl das gezeigte Produkt so nicht existiert, bewegt sich im Bereich irreführender Werbung — das reale Produkt muss dem Video entsprechen (sonst Chargebacks + Meta-Feedback-Score-Tod).
 
+---
+
+## 3. Zweiter Teardown: Der 54-Mio.-Views-Winner von @cozystarbaby (27. Juli)
+
+> Gemessen am Original-File: **7,4 s · 720×1280 · 30 fps · EIN einziger durchgehender Shot, null Schnitte.**
+> Metriken: 54 Mio. Views · 3,4 Mio. Likes · **2 Mio. Shares** · 78,1 Tsd. Reposts.
+> Audio: Original-Audio „byrachforshaw" (= die Häkel-Designerin des Star-Suit-Patterns — das Video ist ihr UGC, von cozystarbaby als eigener Post verwendet). Caption: „This is what a new born mom needs…" — identisch mit dem im Konkurrenz-Protokoll indexierten Reel.
+
+**Aufbau (komplett):** Bett mit zerknitterter beiger Leinen-Bettwäsche, graues Polster-Kopfteil, salbeigrüne Kissen, weiches Tageslicht. Baby liegt mittig auf dem Rücken im hellblauen Häkel-Star-Suit (Kapuze auf, 2 Zierknöpfe, Spiralmuster am Bauch) und **lacht 7 Sekunden lang ununterbrochen aus vollem Hals**, strampelt dabei mit Armen und Beinen, sodass die Sternzacken wippen. Kamera: leicht erhöht vom Fussende, quasi statisch mit natürlichem Handheld-Mikrowackeln, minimaler Drift. Text konstant im oberen Drittel: „DON'T let a baby mom see this 😍👶". Kein CTA. Ende ohne Abschluss → nahtloser Loop.
+
+**Warum 54 Mio. statt 7,9 Mio. — die Lektionen:**
+
+1. **Ein perfekter Moment schlägt die Montage.** Kein Ortswechsel, kein Schnitt — nur maximale Emotionsdichte. Baby-Lachen ist (wie Baby-Weinen) biologisch nicht ignorierbar, aber positiv: Es wird geteilt, *weil es gut tut*.
+2. **Der Ton trägt mit:** Das Original-Audio ist das Lachen selbst — Audio-Hook und Emotions-Beweis in einem.
+3. **7 Sekunden = Completion-Rate-Maschine.** Kurz genug für nahezu 100 % Watchtime, Loop verdoppelt sie; die Strampel-Bewegung hält das Auge im Bild.
+4. **Gleiche Share-Formel, weiter gefasst:** „DON'T let a baby mom see this" (statt „a new MOM") — grössere Adressgruppe, 2 Mio. Shares.
+5. **Konsequenz für die Produktion:** Erst das **Ein-Shot-Format** testen (billiger, schneller, höhere Erfolgsquote), die 5-Shot-Montage als Eskalation für Folge-Videos.
+
+### Seedance-Prompt „Ein-Shot-Winner" (mit 2 Referenzbildern, Enten-Variante)
+
+```
+Use reference image 1 as the exact baby (same face, blue eyes, fair skin, thin
+blond hair) and reference image 2 as the exact garment (the fluffy
+white-and-blue duckling hooded romper — identical design, colors and fabric).
+
+Vertical 9:16, 8 seconds, 30fps, ONE single continuous shot, no cuts.
+Photorealistic amateur iPhone footage, natural handheld micro-shake, slight
+slow drift, true-to-life colors, no cinematic grading.
+
+Scene: a cozy bed with crumpled beige linen sheets, a grey upholstered
+headboard and sage-green pillows, soft natural window daylight. The baby from
+reference 1, wearing the duckling romper from reference 2 with the beak hood
+on, lies centered on its back on the bed and laughs uncontrollably with a wide
+open mouth for the entire duration — genuine full-body baby giggles — happily
+kicking its arms and legs so the fluffy romper limbs bounce and wiggle.
+Camera slightly elevated at the foot of the bed, nearly static. Realistic
+fabric physics, natural skin texture, authentic joyful energy from first
+frame to last, seamless loopable ending.
+
+Audio: bright genuine baby laughter and giggles, soft room tone, no music.
+No text overlays, no logos, no watermark.
+```
+
+Text-Overlay im Schnitt: „Zeig das KEINER Baby-Mama 😍👶" (DACH) bzw. „DON'T let a baby mom see this 😍👶". Rest wie in Abschnitt 2 (KI-Label, Caption-Formel, Kommentar-Köder).
+
 ### Formel-Recycling (aus 1 Winner → 10 Videos)
 
 Gleiche 5-Shot-Struktur, nur Orte tauschen: Waschsalon, Bibliothek, Café, Kinderarzt-Wartezimmer, Ikea, Zugabteil, Museumsbank, Rolltreppe (sitzend davor), Blumenwiese, Schneelandschaft. Pro Video nur Shot 2+3 neu generieren, Shots 1/4/5 wiederverwenden → Produktionszeit < 1 h pro Video.
