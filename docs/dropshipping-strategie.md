@@ -213,6 +213,36 @@ Gleiches Produkt, gleiches Grund-Template — aber mit aufschlussreichen Untersc
 
 ---
 
+### 5.6 Ideen-Pipeline: die nächste süsse Silhouette (Lücke 3 konkret)
+
+**Warum der Stern süss wirkt — die Formel, die das Motiv erfüllen muss:**
+
+1. **Gesicht im Zentrum:** Die Kapuze rahmt das runde Babygesicht — das verstärkt das Kindchenschema (grosse Augen, runde Wangen), den biologischen „süss!"-Auslöser.
+2. **Baby wird Objekt:** Sanfte Absurdität. Bei Essens-Motiven kommt „Cute Aggression" dazu — der „zum Anbeissen süss"-Reflex ist real und stark.
+3. **In 0,2 s erkennbar:** Die Silhouette muss als Mini-Thumbnail lesbar sein. Schnelltest: **Existiert das Motiv als Emoji, ist es ikonisch genug** (⭐ 🥐 🍄 🐸 🍓 🌻 🌙 🎃).
+4. **Funktioniert im Liegen:** Babys liegen. Der Stern bleibt liegend perfekt erkennbar — ein stehendes Motiv (z. B. Giraffe) nicht.
+5. **Symmetrie + Pastell + Häkel-Textur:** Handmade-Wärme, in 1–2 Farben häkelbar (Produktionskosten!).
+6. **Kein IP:** Naturformen und Lebensmittel gehören niemandem.
+
+**Kandidaten-Ranking (Marktstatus per Websuche geprüft, Stand 08/2026):**
+
+| Rang | Motiv | Süss-Mechanik | Marktstatus | Einschätzung |
+|---|---|---|---|---|
+| 🥇 | **Fliegenpilz** 🍄 | Rot-weiss gepunktete Kapuze, Cottagecore-/Waldwesen-Ästhetik boomt | Nur Etsy-Handmade + Halloween-Kostüme — **kein dominanter One-Product-Store gefunden** | **Freies Feld.** Ästhetik-Community (Cottagecore) liefert die Zielgruppe gratis. ⚠️ Nicht als Mario-Toad stylen (Nintendo-IP) |
+| 🥈 | **Croissant** 🥐 | Food-Cuteness pur („zum Anbeissen"), goldbraune Wickel-Optik | Auf TikTok Shop & Walmart bereits vorhanden | **Validiert, aber Konkurrenz da.** Die Premium-Häkel-Version mit Kapuze könnte noch frei sein — Abgrenzung nötig |
+| 🥉 | **Frosch** 🐸 | Grüne Kapuze mit Kulleraugen; Frog-Ästhetik ist etabliertes Meme | Frog-Hats viral, Ganzkörper-Häkelanzug weniger besetzt | Starkes Meme-Potenzial, Zielgruppe überlappt mit Star-Suit-Käuferinnen |
+| 4 | **Erdbeere** 🍓 | Rot mit Pünktchen, Erdbeer-Hüte seit Jahren beliebt | Hüte gesättigt, Ganzkörper offener | Evergreen, aber wenig Pattern-Interrupt |
+| 5 | **Sonnenblume** 🌻 | Gesicht als Blütenmitte = maximales Kindchenschema | vereinzelt Etsy | Fotoshooting-Angle stark |
+| 6 | **Erbsenschote** | „Two peas in a pod" — **Zwillings-Angle**, emotionales Geschenk | kaum besetzt | Kleiner Markt, null Konkurrenz, extrem hohe Share-Rate bei Zwillings-Content |
+| 7 | **Mond** 🌙 | Schlaf-Assoziation, Halbmond passt zur Liegehaltung | wenig besetzt | Guter Zweitartikel zum Stern-Thema (Bundle „Mond & Sterne") |
+| 8 | **Kürbis** 🎃 | Halloween | saisonal stark besetzt | Nur als Q4-Saisonartikel, dann aber explosiv |
+
+**Nicht nehmen:** Bär, Hase, Ente (generisch — jedes Babygeschäft hat sie, kein Scroll-Stopper); alles mit Marke (Mario-Pilz mit Gesicht, Pokémon, Disney-Figuren).
+
+**Empfehlung:** Fliegenpilz als Hauptkandidat testen (freies Feld + fertige Ästhetik-Community), Croissant als validierten Zweitkandidaten, Frosch als dritten. Vor dem Sourcing jeden Kandidaten durch die 7-Punkte-Checkliste (Abschnitt 3) und einen TikTok/Insta-Suchtest jagen: Gibt es schon >3 One-Product-Accounts dazu, ist das Fenster kleiner.
+
+---
+
 ## 6. Dein konkreter Fahrplan
 
 1. **Woche 1 — Studieren:** 5 Accounts nach dem Schema aus Abschnitt 4 protokollieren (je Top 10 + Flop 10 Videos). Ergebnis: Liste der 2–3 Gewinner-Formate.
