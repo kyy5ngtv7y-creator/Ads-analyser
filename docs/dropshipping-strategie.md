@@ -178,7 +178,32 @@ Aufbau der Mobile-Produktseite von oben nach unten — jedes Element hat einen J
 
 **Hinweis Claim-Prüfung:** „100 % Premium Organic Cotton" widerspricht der cozystarbaby-Beschreibung desselben Produkttyps (80 % Baumwolle / 20 % Acryl). Solche Material-Claims bei Baby-Produkten sind abmahn- und Ad-Policy-relevant — im eigenen Shop nur behaupten, was der Lieferant belegen kann.
 
-### 5.4 Was das für dich bedeutet
+### 5.4 Zweiter Teardown: cozystarbaby.com — und der direkte Vergleich
+
+Gleiches Produkt, gleiches Grund-Template — aber mit aufschlussreichen Unterschieden:
+
+| Element | Starzies | Cozy Star Baby |
+|---|---|---|
+| Rabatt-Frame | 50 % „Launch Sale" | 45 % OFF + „Free Gifts End Today" |
+| Knappheit | **Stück-basiert:** „Only 12 Left Today" | **Zeit-basiert:** Countdown-Timer (~5 h) in der Top-Bar |
+| Preis (1 Stück) | $43 | **CHF 38.00** (Anker ~CHF 69) |
+| Bundle-Leiter | 1 / 2 (−$5) / 3+1 gratis = $130 | 1+1 Gift CHF 38 · 2+2 Gifts CHF 69.92 („Save 35 %") · 3+3 Gifts CHF 98.90 („Best Value") |
+| Value-Stacking im Bundle | Mystery Gift, Free Shipping | ✓ **Shipping Protection** · ✓ **Priority Handling** · ✓ Crochet Care Guide · ✓ Surprise Gift — jede Zeile als eigener „Wert" abgehakt |
+| Material-Claim | „100 % Premium Organic Cotton" | **„80 % cotton, 20 % soft acrylic"** (ehrlich — bestätigt: der Starzies-Claim ist höchstwahrscheinlich falsch) |
+| Grössen | ab 0–3 Monate | **0–6 / 6–12 / 12–24 Monate** mit bebildertem Size-Guide (50–60/60–70/70–80 cm) + „when between sizes, size up" → senkt Retouren |
+| Social Proof | ★ 4,8 · 1.000+ Reviews, UGC-Grid | ★ 4,8 · ~1.157 Reviews, riesige Testimonial-Wand mit „Verified"-Badges, „Join +500 Happy Customers", 30-Tage-Garantie-Badge |
+| Einwand-FAQ | „Can My Baby Sleep in it?" | „**Will my baby overheat?**" — gleiche Technik: die konkrete Mutter-Angst wörtlich aussprechen |
+| Handmade-Framing | „carefully hand-crocheted" | „individually crocheted by hand, **stitch by stitch**" |
+
+**Was der Vergleich lehrt:**
+
+1. **Es ist ein Template, kein Zufall.** Zwei konkurrierende Shops, identische Architektur: Rabatt-Bar → Bundle-Leiter → Liefer-Timeline → Handmade-Story → Size/Material → Garantie-Badge → Einwand-FAQ → Review-Wand. Das ist die kopierbare Blaupause für eine eigene Produktseite.
+2. **CHF-Preise ≠ DACH-Lokalisierung.** Cozy Star Baby zeigt Schweizer Kunden CHF (Shopify-Geo-Währung), aber die ganze Seite bleibt englisch. Die Lücke aus 5.5 verengt sich also auf: **Sprache, deutschsprachige Reviews/UGC und deutschsprachiger Video-Content** — Währung allein hat der Wettbewerb schon abgedeckt.
+3. **Zwei Knappheits-Schulen:** Stück-Knappheit (Starzies) wirkt glaubwürdiger, Zeit-Countdown (CozyStarBaby) wirkt aggressiver — beides täglich resettet, beides grenzwertig gegenüber Verbraucherschutz (in DE/CH sind Fake-Countdowns abmahnfähig). Im eigenen Shop: echte Knappheit oder gar keine.
+4. **Value-Stacking:** CozyStarBaby listet Selbstverständlichkeiten („Priority Handling", „Care Guide") als abgehakte Gratis-Leistungen im Bundle — billigster Weg, wahrgenommenen Wert zu erhöhen, ohne Marge zu opfern.
+5. **Grössen bis 24 Monate** verdreifachen die Zielgruppe gegenüber Starzies (nur Newborn) und ermöglichen Wiederkäufe („mitwachsen").
+
+### 5.5 Was das für dich bedeutet
 
 - **Validierung ja, 1:1-Kopie nein:** Mehrere Klone = der Markt ist bewiesen, aber im englischsprachigen Raum schon umkämpft. Wer jetzt identisch einsteigt, ist Vierter oder Fünfter.
 - **Lücke 1 — DACH-Lokalisierung:** Alle gefundenen Shops sind englischsprachig. Ein deutschsprachiger Shop (deutsche Videos, deutsche Reviews, Versand-Versprechen für DE/AT/CH, Preis in EUR/CHF) spielt dasselbe validierte Produkt in einem weniger umkämpften Markt.
