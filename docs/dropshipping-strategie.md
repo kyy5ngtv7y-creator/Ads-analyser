@@ -130,7 +130,37 @@ Nicht die Videos anschauen und „inspirieren lassen" — **systematisch protoko
 
 ---
 
-## 5. Dein konkreter Fahrplan
+## 5. Fallstudie: Der Baby-Star-Suit-Markt (cozystarbaby, Starzies & Co.)
+
+Analyse der zwei geteilten Shops (cozystarbaby.com, trystarzies.com) plus der über Websuche gefundenen Klone. Das Produkt: **gehäkelter Baby-Stramplers in Fünfzack-Sternform mit Kapuze** („Baby Star Suit"), Baumwoll-Acryl-Mix, positioniert für Neugeborene bis ~6 Monate.
+
+### 5.1 Warum dieses Produkt strategisch fast perfekt ist
+
+Es kombiniert exakt die zwei Achsen aus Abschnitt 3:
+
+- **Ebene 3 (Kinder & Familie):** Eltern und werdende Eltern kaufen emotional. Dazu Geschenk-Anlässe am Fliessband: Babyshower, Geburt, Newborn-Fotoshooting, Halloween, Weihnachten.
+- **Ebene 4 (Viralität):** Ein Baby in Sternform ist der Scroll-Stopper schlechthin — süss UND absurd. Jedes Foto ist ein Share-Anlass (Grosseltern, Gruppenchats, „das braucht dein Baby"). Das Produkt ist gleichzeitig Foto-Requisite — der Content erstellt sich von selbst.
+- **Rechtlich sauber:** Ein schlichter Stern, kein SpongeBob-Branding. Die rosa Variante *erinnert* an Patrick, ohne die Marke zu verletzen — genau das „Muster kopieren, nicht das Motiv"-Prinzip aus Abschnitt 2. (Achtung: TikTok-Trends wie „Patrick Starfish Onesie" zeigen, dass manche Anbieter die IP-Linie trotzdem überschreiten — nicht nachmachen.)
+
+### 5.2 Das Playbook der Anbieter (aus URLs + Suchergebnissen rekonstruiert)
+
+1. **One-Product-Store:** Jeder Shop verkauft genau ein Produkt (`/products/cozy`, `/products/starzies-snuggle-star`, `/products/thelittlestarsuit`). Fokus statt Katalog — deckt sich mit Abschnitt 4, Punkt 2.
+2. **Organischer Funnel, messbar in den Link-Parametern:** Der Starzies-Link trägt `utm_source=ig&utm_medium=social&utm_content=link_in_bio` — Traffic kommt aus organischen Insta-Videos über den Bio-Link. Der cozystarbaby-Link trägt eine Instagram-`fbclid` — ebenfalls Insta-Klick. Beide fahren das Organik-Playbook aus Abschnitt 4.
+3. **Handmade-Framing:** „Handmade with love", „one-of-a-kind", „small family business", „carefully hand-crocheted". Das rechtfertigt den Preis, erzeugt Emotion und tarnt das Dropshipping. Dazu klassische Knappheit: „limited stock", „50 % off launch sale — today only".
+4. **Trust-Elemente:** Kundenreviews („10/10", „fast shipping, flawless quality", „craftsmanship is beautiful") prominent auf der Produktseite.
+5. **Multi-Store-Strategie — der wichtigste Fund:** Dasselbe Produkt läuft parallel unter vielen Domains: cozystarbaby**.com** UND cozystarbaby**.store**, trystarzies.com UND babystarnest.com (beide „starzies"-gebrandet), dazu unabhängige Klone wie snugglestar.shop und babystarsuit.com. Gründe: Redundanz gegen Ad-Account-/Shop-Sperren, A/B-Tests, Geo-Splits — und es zeigt: **mehrere Operator haben dieses Produkt unabhängig validiert.** Der Winner ist bewiesen.
+
+### 5.3 Was das für dich bedeutet
+
+- **Validierung ja, 1:1-Kopie nein:** Mehrere Klone = der Markt ist bewiesen, aber im englischsprachigen Raum schon umkämpft. Wer jetzt identisch einsteigt, ist Vierter oder Fünfter.
+- **Lücke 1 — DACH-Lokalisierung:** Alle gefundenen Shops sind englischsprachig. Ein deutschsprachiger Shop (deutsche Videos, deutsche Reviews, Versand-Versprechen für DE/AT/CH, Preis in EUR/CHF) spielt dasselbe validierte Produkt in einem weniger umkämpften Markt.
+- **Lücke 2 — Angle-Variation:** Newborn-Fotografie-Angle (B2B an Fotografen!), Babyshower-Geschenk-Angle, Halloween-Kostüm-Angle — die Klone fahren fast alle denselben „cozy/cute"-Angle.
+- **Lücke 3 — Silhouetten-Variation:** Das Muster „Baby in absurder/ikonischer Häkel-Silhouette" trägt weiter als der Stern: Frucht, Tier, Blume, Croissant … gleiche Mechanik, freies Feld. (Vorher durch die 7-Punkte-Checkliste aus Abschnitt 3 jagen.)
+- **Vorsicht Erwartungsmanagement:** „Handmade"-Framing bei Dropshipping-Lieferzeiten erzeugt Chargebacks und schlechte Reviews. Wenn du das Framing nutzt, muss Qualität + Lieferzeit halten — sonst stirbt der Shop an Meta-Feedback-Scores.
+
+---
+
+## 6. Dein konkreter Fahrplan
 
 1. **Woche 1 — Studieren:** 5 Accounts nach dem Schema aus Abschnitt 4 protokollieren (je Top 10 + Flop 10 Videos). Ergebnis: Liste der 2–3 Gewinner-Formate.
 2. **Woche 1–2 — Produkt wählen:** 10 Ideen durch die 7-Punkte-Checkliste (Abschnitt 3) jagen. Bevorzugt: Ebene-1-Bedürfnis **mit** Ebene-4-Twist, oder Ebene-4-Produkt **ohne** IP-Risiko.
@@ -140,7 +170,7 @@ Nicht die Videos anschauen und „inspirieren lassen" — **systematisch protoko
 
 ---
 
-## 6. Verbindung zum Ads·Analyser
+## 7. Verbindung zum Ads·Analyser
 
 Dieses Repo bewertet Ads vor dem Schalten. Die Brücke zur organischen Strategie:
 
