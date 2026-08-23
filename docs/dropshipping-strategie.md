@@ -241,6 +241,27 @@ Gleiches Produkt, gleiches Grund-Template — aber mit aufschlussreichen Untersc
 
 **Empfehlung:** Fliegenpilz als Hauptkandidat testen (freies Feld + fertige Ästhetik-Community), Croissant als validierten Zweitkandidaten, Frosch als dritten. Vor dem Sourcing jeden Kandidaten durch die 7-Punkte-Checkliste (Abschnitt 3) und einen TikTok/Insta-Suchtest jagen: Gibt es schon >3 One-Product-Accounts dazu, ist das Fenster kleiner.
 
+### 5.7 Zehn bewertete Produktideen Baby-Kleidung
+
+Alle Ideen erfüllen die Niedlichkeits-Formel aus 5.6 (Gesicht im Zentrum, liegend erkennbar, Emoji-Test, kein IP) und decken bewusst **unterschiedliche Angles** ab, damit du nicht mit allen Ideen um dieselbe Käuferin konkurrierst:
+
+| # | Idee | Mechanik / Angle | Zielkäufer & Anlass | Marktstatus (geprüft 08/2026) | Beispiel-Hook fürs erste Video |
+|---|---|---|---|---|---|
+| 1 | **Fliegenpilz-Häkelanzug** 🍄 | Cottagecore-/Waldwesen-Ästhetik, rot-weiss gepunktete Kapuze | Mütter mit Ästhetik-Feed; Newborn-Shooting | **Frei** — nur Etsy-Handmade & Halloween-Kostüme, kein One-Product-Store | „POV: dein Baby ist ein Waldwesen 🍄" |
+| 2 | **Rennauto-Anzug** 🏎️ | Einziger **Väter-Angle** im Markt; „mein kleiner Rennfahrer" | Väter, Grossväter; Geburt eines Sohnes/Tochter | Frei (generisches Rennauto, ohne McQueen-Elemente!) | „Dad hat das Baby wieder angezogen…" |
+| 3 | **Bienchen-Anzug** 🐝 | Gelb-schwarze Streifen + Fühler-Kapuze; „mein kleiner Honig" als Wortspiel in Copy | Mütter; Frühlings-Shootings, 1. Geburtstag („Bee-Day") | **Frei** — nur Etsy-Patterns/Handmade, kein dominanter Shop | „Unser kleiner Honig ist da 🐝" |
+| 4 | **Croissant-Anzug** 🥐 | Food-Cuteness („zum Anbeissen"), goldbraune Wickeloptik | Mütter, Geschenk | Validiert, aber TikTok Shop & Walmart schon drin — nur mit Premium-Häkel-Abgrenzung | „Warnung: Nicht essen. Ist ein Baby." |
+| 5 | **Katz-&-Maus-Geschwister-Set** 🐱🐭 | Duo-Dynamik (die Tom-&-Jerry-Emotion, legal); eingebauter Kommentar-Köder | Eltern von 2 Kindern; Geschwister-Geschenk | Frei als Set-Konzept | „Wer ist bei euch die Katze und wer die Maus?" |
+| 6 | **Erbsenschoten-Zwillingsset** | „Two peas in a pod" — Zwillings-Emotion, konkurrenzlos hohe Share-Rate in Twin-Communities | Zwillingseltern, Babyshower | Kaum besetzt | „Zwillinge erwartet? Dann scroll nicht weiter 🫛" |
+| 7 | **Sonnenblumen-Anzug** 🌻 | Gesicht als Blütenmitte = maximales Kindchenschema | Mütter **und B2B: Newborn-Fotografen** (kaufen mehrfach!) | Vereinzelt Etsy | „Der Moment, wenn die Blüte aufwacht 🌻" |
+| 8 | **Mond-&-Sterne-Kollektion** 🌙⭐ | Dockt an den **validierten** Star-Suit-Markt an; Schlaf-Thema; Bundle „Mond & Sterne" (Geschwister/Zwillinge) | Star-Suit-Zielgruppe; Geburtsgeschenk | Stern gesättigt, **Mond fast frei** → als Erweiterung einsteigen statt als Klon | „Jeder kennt den Stern. Aber habt ihr den Mond gesehen? 🌙" |
+| 9 | **Frosch-Anzug** 🐸 | Kulleraugen-Kapuze; Frog-Ästhetik ist etabliertes Meme mit eigener Community | Gen-Z-Mütter, Meme-affine Käufer | Frog-Hats viral, Ganzkörper weniger besetzt | „Mein Baby macht jetzt ribbit 🐸" |
+| 10 | **Hummer-Anzug** 🦞 | Food-Humor + Halloween; „das teuerste Gericht im Haus" | Eltern für Halloween (Q4-Rakete), Foto-Gag | Als Kostüm bekannt, als Häkel-Premium offen | „Das teuerste Gericht, das wir je bestellt haben 🦞" |
+
+**Lehre aus dem Burrito-Check:** Die Baby-Burrito-/Tortilla-Wickeldecke war 2019 ein Mega-Viral und ist heute Massenware bei Amazon/Walmart — der endgültige Beweis, dass die Food-Mechanik funktioniert, und zugleich die Warnung: **Wer erst einsteigt, wenn Walmart es führt, ist 3 Jahre zu spät.** Deshalb zählt der Marktstatus-Check vor jedem Start.
+
+**Priorisierung:** Start mit 1 (Fliegenpilz) oder 8 (Mond — cleverster Einstieg, weil er den bewiesenen Star-Markt erweitert statt ihn zu kopieren). Duo-/Zwillings-Ideen (5, 6) als Zweitprodukt zur AOV-Steigerung im selben Shop.
+
 ---
 
 ## 6. Dein konkreter Fahrplan
