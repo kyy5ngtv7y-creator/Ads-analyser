@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { applyTakeover, getSpotState } from "@/lib/store";
+import { applyBid } from "@/lib/store";
 import { baseUrl, getStripe, stripeEnabled } from "@/lib/stripe";
-import { formatUsd, minNextBidCents } from "@/lib/types";
 import { bidSchema } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
@@ -21,34 +20,13 @@ export async function POST(request: Request) {
   }
   const bid = parsed.data;
 
-  const state = await getSpotState();
-  const min = minNextBidCents(state);
-  if (bid.amountCents < min) {
-    return NextResponse.json(
-      {
-        error: `Du wurdest überboten – Minimum ist jetzt ${formatUsd(min)}`,
-        minNextBidCents: min,
-      },
-      { status: 409 }
-    );
-  }
-
-  // Demo-Modus ohne Stripe: Übernahme sofort anwenden.
+  // Demo-Modus ohne Stripe: Gebot sofort in die Rangliste aufnehmen.
   if (!stripeEnabled()) {
-    const result = await applyTakeover(bid);
-    if (!result.ok) {
-      return NextResponse.json(
-        {
-          error: `Du wurdest überboten – Minimum ist jetzt ${formatUsd(result.minNextBidCents)}`,
-          minNextBidCents: result.minNextBidCents,
-        },
-        { status: 409 }
-      );
-    }
-    return NextResponse.json({ ok: true, demo: true });
+    const result = await applyBid(bid);
+    return NextResponse.json({ ok: true, demo: true, rank: result.rank });
   }
 
-  // Stripe-Modus: Checkout-Session erstellen, Übernahme erst nach Zahlung (Webhook).
+  // Stripe-Modus: Checkout-Session erstellen, Gebot zählt erst nach Zahlung (Webhook).
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -59,7 +37,7 @@ export async function POST(request: Request) {
           currency: "usd",
           unit_amount: bid.amountCents,
           product_data: {
-            name: `BrandSpot-Übernahme: ${bid.brand}`,
+            name: `BrandSpot-Gebot: ${bid.brand}`,
             description: bid.message,
           },
         },

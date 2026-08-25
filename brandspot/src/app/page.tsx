@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { formatUsd, type PublicSpot, type Takeover } from "@/lib/types";
+import { formatUsd, type Bid, type PublicSpot } from "@/lib/types";
 
 const COLORS = [
   "#e11d48",
@@ -38,7 +38,7 @@ export default function Home() {
   const [formOpen, setFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [justWon, setJustWon] = useState(false);
+  const [wonRank, setWonRank] = useState<number | null>(null);
 
   const [brand, setBrand] = useState("");
   const [message, setMessage] = useState("");
@@ -55,7 +55,7 @@ export default function Home() {
       const data: PublicSpot = await res.json();
       setSpot(data);
       if (!amountTouched.current) {
-        setAmount(String(data.minNextBidCents / 100));
+        setAmount(String(data.toBeatCents / 100));
       }
     } catch {
       // Netzwerkfehler still ignorieren, nächster Poll versucht es erneut
@@ -68,7 +68,8 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [load]);
 
-  const minNext = spot?.minNextBidCents ?? 100;
+  const minBid = spot?.minBidCents ?? 100;
+  const toBeat = spot?.toBeatCents ?? 100;
 
   const amountCents = useMemo(() => {
     const normalized = amount.replace(",", ".");
@@ -82,8 +83,8 @@ export default function Home() {
     if (submitting) return;
     setError(null);
 
-    if (amountCents === null || amountCents < minNext) {
-      setError(`Dein Gebot muss mindestens ${formatUsd(minNext)} sein.`);
+    if (amountCents === null || amountCents < minBid) {
+      setError(`Dein Gebot muss mindestens ${formatUsd(minBid)} sein.`);
       return;
     }
 
@@ -104,18 +105,14 @@ export default function Home() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Etwas ist schiefgelaufen.");
-        if (data.minNextBidCents) {
-          amountTouched.current = false;
-          setAmount(String(data.minNextBidCents / 100));
-        }
         return;
       }
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
         return;
       }
-      // Demo-Modus: sofort übernommen
-      setJustWon(true);
+      // Demo-Modus: Gebot ist sofort in der Rangliste
+      setWonRank(typeof data.rank === "number" ? data.rank : null);
       setFormOpen(false);
       amountTouched.current = false;
       setBrand("");
@@ -123,7 +120,7 @@ export default function Home() {
       setUrl("");
       setImageUrl("");
       await load();
-      setTimeout(() => setJustWon(false), 5000);
+      setTimeout(() => setWonRank(null), 6000);
     } catch {
       setError("Verbindung fehlgeschlagen. Versuch es nochmal.");
     } finally {
@@ -131,8 +128,10 @@ export default function Home() {
     }
   }
 
-  const current = spot?.current ?? null;
-  const cardColor = current?.color ?? "#1f2937";
+  const ranked = spot?.bids ?? [];
+  const top = ranked[0] ?? null;
+  const rest = ranked.slice(1);
+  const cardColor = top?.color ?? "#1f2937";
   const cardText = textOn(cardColor);
 
   return (
@@ -152,7 +151,7 @@ export default function Home() {
                 insgesamt geboten
               </div>
               <div>
-                {spot.history.length + (spot.current ? 1 : 0)} Übernahmen
+                {ranked.length} {ranked.length === 1 ? "Gebot" : "Gebote"}
                 {spot.demoMode && (
                   <span className="ml-2 rounded bg-amber-400/15 px-1.5 py-0.5 text-xs font-semibold text-amber-300">
                     Demo-Modus
@@ -166,44 +165,50 @@ export default function Home() {
 
       {/* Intro */}
       <p className="mb-6 text-center text-sm text-zinc-400">
-        Ein einziger Werbeplatz. Er gehört der Brand, die zuletzt am meisten
-        gezahlt hat – bis jemand mehr bietet. Startpreis:{" "}
-        <span className="font-semibold text-zinc-200">$1</span>.
+        Jedes Gebot ab{" "}
+        <span className="font-semibold text-zinc-200">$1</span> kommt in die
+        Rangliste. Wer am meisten bietet, bekommt den großen Spot – bei
+        gleichem Betrag gewinnt, wer <span className="font-semibold text-zinc-200">zuerst</span> geboten hat.
       </p>
 
-      {justWon && (
+      {wonRank !== null && (
         <div className="mb-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-center font-semibold text-emerald-300">
-          🎉 Der Spot gehört jetzt dir – bis dich jemand überbietet!
+          🎉 Dein Gebot ist drin – du bist auf{" "}
+          <span className="font-black">Platz {wonRank}</span>
+          {wonRank === 1 ? " und hast den Spot!" : "!"}
         </div>
       )}
 
-      {/* Der Spot */}
+      {/* Platz 1: Der Spot */}
       <section
-        className="spot-card rounded-3xl p-8 text-center shadow-2xl sm:p-12"
+        className="spot-card relative rounded-3xl p-8 text-center shadow-2xl sm:p-12"
         style={{ backgroundColor: cardColor, color: cardText }}
       >
-        {current ? (
+        {top ? (
           <>
-            <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
-              Dieser Spot gehört gerade
+            <div className="absolute left-4 top-4 rounded-full bg-black/20 px-3 py-1 text-sm font-black">
+              #1
             </div>
-            {current.imageUrl && (
+            <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
+              Platz 1 gehört gerade
+            </div>
+            {top.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={current.imageUrl}
-                alt={current.brand}
+                src={top.imageUrl}
+                alt={top.brand}
                 className="mx-auto mt-6 h-24 w-24 rounded-2xl object-cover shadow-lg"
               />
             )}
             <h1 className="mt-4 break-words text-5xl font-black tracking-tight sm:text-6xl">
-              {current.brand}
+              {top.brand}
             </h1>
             <p className="mx-auto mt-4 max-w-md break-words text-lg opacity-90">
-              {current.message}
+              {top.message}
             </p>
-            {current.url && (
+            {top.url && (
               <a
-                href={current.url}
+                href={top.url}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className="mt-6 inline-block rounded-full px-6 py-2.5 text-sm font-bold shadow"
@@ -213,14 +218,13 @@ export default function Home() {
               </a>
             )}
             <div className="mt-8 text-sm opacity-70">
-              hat {formatUsd(current.amountCents)} gezahlt ·{" "}
-              {timeAgo(current.createdAt)}
+              hat {formatUsd(top.amountCents)} geboten · {timeAgo(top.createdAt)}
             </div>
           </>
         ) : (
           <>
             <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
-              Dieser Spot ist noch frei
+              Platz 1 ist noch frei
             </div>
             <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
               Deine Brand hier.
@@ -235,25 +239,28 @@ export default function Home() {
       {/* CTA */}
       <div className="mt-8 text-center">
         {!formOpen ? (
-          <button
-            onClick={() => {
-              setFormOpen(true);
-              setError(null);
-            }}
-            className="rounded-full bg-amber-400 px-8 py-4 text-lg font-black text-zinc-950 shadow-lg transition hover:scale-105 hover:bg-amber-300"
-          >
-            {current
-              ? `Spot klauen für ${formatUsd(minNext)}`
-              : `Spot sichern für ${formatUsd(minNext)}`}
-          </button>
+          <>
+            <button
+              onClick={() => {
+                setFormOpen(true);
+                setError(null);
+              }}
+              className="rounded-full bg-amber-400 px-8 py-4 text-lg font-black text-zinc-950 shadow-lg transition hover:scale-105 hover:bg-amber-300"
+            >
+              Mitbieten ab {formatUsd(minBid)}
+            </button>
+            {top && (
+              <p className="mt-3 text-sm text-zinc-500">
+                Ab {formatUsd(toBeat)} bist du auf Platz 1.
+              </p>
+            )}
+          </>
         ) : (
           <form
             onSubmit={submit}
             className="mx-auto max-w-md space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-left"
           >
-            <h2 className="text-center text-xl font-bold">
-              Übernimm den Spot
-            </h2>
+            <h2 className="text-center text-xl font-bold">Gib dein Gebot ab</h2>
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
@@ -334,7 +341,8 @@ export default function Home() {
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
-                Dein Gebot in $ * <span className="opacity-60">(mind. {formatUsd(minNext)})</span>
+                Dein Gebot in $ *{" "}
+                <span className="opacity-60">(mind. {formatUsd(minBid)})</span>
               </label>
               <input
                 value={amount}
@@ -346,6 +354,13 @@ export default function Home() {
                 required
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-lg font-bold outline-none focus:border-amber-400"
               />
+              {top && (
+                <p className="mt-1 text-xs text-zinc-500">
+                  {amountCents !== null && amountCents >= toBeat
+                    ? "Damit landest du auf Platz 1. 🏆"
+                    : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem in die Rangliste.`}
+                </p>
+              )}
             </div>
 
             {error && (
@@ -363,7 +378,7 @@ export default function Home() {
                 {submitting
                   ? "Einen Moment…"
                   : spot?.demoMode
-                    ? "Spot übernehmen (Demo)"
+                    ? "Gebot abgeben (Demo)"
                     : "Weiter zur Zahlung"}
               </button>
               <button
@@ -385,12 +400,58 @@ export default function Home() {
         )}
       </div>
 
+      {/* Rangliste ab Platz 2 */}
+      {rest.length > 0 && (
+        <section className="mt-16">
+          <h2 className="mb-4 text-center text-lg font-bold text-zinc-300">
+            Die Rangliste
+          </h2>
+          <ul className="space-y-2">
+            {rest.map((b: Bid, i: number) => (
+              <li
+                key={b.id}
+                className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="w-8 shrink-0 text-right font-black text-zinc-500">
+                    #{i + 2}
+                  </span>
+                  <span
+                    className="h-3 w-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: b.color }}
+                  />
+                  {b.url ? (
+                    <a
+                      href={b.url}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="truncate font-semibold hover:text-amber-300"
+                    >
+                      {b.brand}
+                    </a>
+                  ) : (
+                    <span className="truncate font-semibold">{b.brand}</span>
+                  )}
+                  <span className="hidden truncate text-sm text-zinc-500 sm:inline">
+                    {b.message}
+                  </span>
+                </div>
+                <div className="ml-3 shrink-0 text-right text-sm">
+                  <div className="font-bold">{formatUsd(b.amountCents)}</div>
+                  <div className="text-xs text-zinc-500">{timeAgo(b.createdAt)}</div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* So funktioniert's */}
       <section className="mt-16 grid gap-4 text-center sm:grid-cols-3">
         {[
-          ["1", "Biete mehr", "Zahl mindestens $1 mehr als die aktuelle Brand."],
-          ["2", "Gehör dir", "Deine Brand, deine Botschaft, deine Farbe – sofort live."],
-          ["3", "Bis…", "…dich die nächste Brand überbietet. So einfach ist das."],
+          ["1", "Biete ab $1", "Jedes Gebot kommt in die Rangliste – egal wie hoch."],
+          ["2", "Mehr = weiter oben", "Der höchste Betrag bekommt den großen Spot ganz oben."],
+          ["3", "Schnell sein lohnt sich", "Bei gleichem Betrag steht vorne, wer zuerst geboten hat."],
         ].map(([n, title, text]) => (
           <div key={n} className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
             <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 font-black text-zinc-950">
@@ -402,40 +463,8 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Historie */}
-      {spot && spot.history.length > 0 && (
-        <section className="mt-16">
-          <h2 className="mb-4 text-center text-lg font-bold text-zinc-300">
-            Frühere Besitzer
-          </h2>
-          <ul className="space-y-2">
-            {spot.history.map((t: Takeover) => (
-              <li
-                key={t.id}
-                className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: t.color }}
-                  />
-                  <span className="truncate font-semibold">{t.brand}</span>
-                  <span className="hidden truncate text-sm text-zinc-500 sm:inline">
-                    {t.message}
-                  </span>
-                </div>
-                <div className="ml-3 shrink-0 text-right text-sm">
-                  <div className="font-bold">{formatUsd(t.amountCents)}</div>
-                  <div className="text-xs text-zinc-500">{timeAgo(t.createdAt)}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       <footer className="mt-20 text-center text-xs text-zinc-600">
-        BrandSpot – inspiriert von outbid.lol. Wer zahlt, gewinnt. Vorerst.
+        BrandSpot – inspiriert von outbid.lol. Wer mehr bietet, steht oben.
       </footer>
     </main>
   );

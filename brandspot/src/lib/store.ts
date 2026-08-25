@@ -1,20 +1,16 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import {
-  MIN_INCREMENT_CENTS,
-  minNextBidCents,
-  type SpotState,
-  type Takeover,
-} from "./types";
+import { rankBids, type Bid, type SpotState } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "spot.json");
-const HISTORY_LIMIT = 100;
+// Obergrenze für gespeicherte Gebote: Beim Überschreiten fliegen die
+// am niedrigsten platzierten Gebote raus (die Gesamtsumme bleibt erhalten).
+const BIDS_LIMIT = 500;
 
 const EMPTY_STATE: SpotState = {
-  current: null,
-  history: [],
+  bids: [],
   totalRaisedCents: 0,
 };
 
@@ -28,8 +24,7 @@ async function readState(): Promise<SpotState> {
     const parsed = JSON.parse(raw) as SpotState;
     if (typeof parsed !== "object" || parsed === null) return { ...EMPTY_STATE };
     return {
-      current: parsed.current ?? null,
-      history: Array.isArray(parsed.history) ? parsed.history : [],
+      bids: Array.isArray(parsed.bids) ? parsed.bids : [],
       totalRaisedCents:
         typeof parsed.totalRaisedCents === "number" ? parsed.totalRaisedCents : 0,
     };
@@ -49,7 +44,7 @@ export async function getSpotState(): Promise<SpotState> {
   return readState();
 }
 
-export type TakeoverInput = {
+export type BidInput = {
   brand: string;
   message: string;
   url: string | null;
@@ -58,23 +53,21 @@ export type TakeoverInput = {
   amountCents: number;
 };
 
-export type ApplyResult =
-  | { ok: true; takeover: Takeover; state: SpotState }
-  | { ok: false; reason: "outbid"; minNextBidCents: number };
+export type ApplyResult = {
+  bid: Bid;
+  rank: number; // 1-basiert
+  state: SpotState;
+};
 
 /**
- * Wendet eine Übernahme an, sofern das Gebot (immer noch) hoch genug ist.
- * Bei Stripe-Zahlungen kann zwischen Checkout und Webhook jemand anderes
- * übernommen haben – dann schlägt die Übernahme fehl ("outbid").
+ * Fügt ein Gebot der Rangliste hinzu. Jedes Gebot ab dem Mindestpreis
+ * wird angenommen – der Betrag bestimmt nur die Platzierung, bei
+ * Gleichstand gewinnt das frühere Gebot.
  */
-export async function applyTakeover(input: TakeoverInput): Promise<ApplyResult> {
+export async function applyBid(input: BidInput): Promise<ApplyResult> {
   const task = writeQueue.then(async (): Promise<ApplyResult> => {
     const state = await readState();
-    const min = minNextBidCents(state);
-    if (input.amountCents < min) {
-      return { ok: false, reason: "outbid", minNextBidCents: min };
-    }
-    const takeover: Takeover = {
+    const bid: Bid = {
       id: randomUUID(),
       brand: input.brand,
       message: input.message,
@@ -84,19 +77,15 @@ export async function applyTakeover(input: TakeoverInput): Promise<ApplyResult> 
       amountCents: input.amountCents,
       createdAt: new Date().toISOString(),
     };
+    const ranked = rankBids([...state.bids, bid]).slice(0, BIDS_LIMIT);
     const next: SpotState = {
-      current: takeover,
-      history: [
-        ...(state.current ? [state.current] : []),
-        ...state.history,
-      ].slice(0, HISTORY_LIMIT),
+      bids: ranked,
       totalRaisedCents: state.totalRaisedCents + input.amountCents,
     };
     await writeState(next);
-    return { ok: true, takeover, state: next };
+    const rank = ranked.findIndex((b) => b.id === bid.id) + 1;
+    return { bid, rank: rank === 0 ? ranked.length + 1 : rank, state: next };
   });
   writeQueue = task.catch(() => undefined);
   return task;
 }
-
-export { minNextBidCents, MIN_INCREMENT_CENTS };

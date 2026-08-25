@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { applyTakeover } from "@/lib/store";
+import { applyBid } from "@/lib/store";
 import { getStripe, stripeEnabled } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +32,9 @@ export async function POST(request: Request) {
     const m = session.metadata ?? {};
     const amountCents = Number(m.amountCents);
     if (m.brand && m.message && Number.isInteger(amountCents) && amountCents > 0) {
-      const result = await applyTakeover({
+      // Jedes bezahlte Gebot landet in der Rangliste – die Platzierung
+      // ergibt sich aus Betrag und Zahlungszeitpunkt.
+      await applyBid({
         brand: m.brand,
         message: m.message,
         url: m.url || null,
@@ -40,14 +42,6 @@ export async function POST(request: Request) {
         color: /^#[0-9a-f]{6}$/.test(m.color ?? "") ? m.color : "#111827",
         amountCents,
       });
-      if (!result.ok) {
-        // Zwischen Checkout und Zahlung hat jemand höher geboten.
-        // MVP-Verhalten: Zahlung wird nicht angewendet; Erstattung manuell
-        // über das Stripe-Dashboard (im Log nachvollziehbar).
-        console.warn(
-          `BrandSpot: Zahlung ${session.id} (${amountCents}¢ von ${m.brand}) kam zu spät – Spot wurde bereits höher überboten.`
-        );
-      }
     }
   }
 

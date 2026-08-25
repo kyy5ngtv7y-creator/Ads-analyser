@@ -1,4 +1,4 @@
-export type Takeover = {
+export type Bid = {
   id: string;
   brand: string;
   message: string;
@@ -10,24 +10,36 @@ export type Takeover = {
 };
 
 export type SpotState = {
-  current: Takeover | null;
-  history: Takeover[];
+  bids: Bid[];
   totalRaisedCents: number;
 };
 
-export type PublicSpot = SpotState & {
-  minNextBidCents: number;
+export type PublicSpot = {
+  bids: Bid[]; // absteigend sortiert: höchster Betrag zuerst, bei Gleichstand das ältere Gebot
+  totalRaisedCents: number;
+  minBidCents: number;
+  toBeatCents: number; // ab diesem Betrag ist man sicher auf Platz 1
   demoMode: boolean;
 };
 
 export const START_PRICE_CENTS = 100;
-export const MIN_INCREMENT_CENTS = 100;
 export const MAX_BID_CENTS = 100_000_000;
 
-export function minNextBidCents(state: SpotState): number {
-  return state.current
-    ? state.current.amountCents + MIN_INCREMENT_CENTS
-    : START_PRICE_CENTS;
+/**
+ * Rangfolge: höchster Betrag zuerst. Bei gleichem Betrag gewinnt,
+ * wer zuerst geboten hat (älteres Gebot steht weiter oben).
+ */
+export function rankBids(bids: Bid[]): Bid[] {
+  return [...bids].sort((a, b) => {
+    if (b.amountCents !== a.amountCents) return b.amountCents - a.amountCents;
+    if (a.createdAt !== b.createdAt) return a.createdAt < b.createdAt ? -1 : 1;
+    return a.id < b.id ? -1 : 1;
+  });
+}
+
+export function toBeatCents(bids: Bid[]): number {
+  const top = rankBids(bids)[0];
+  return top ? top.amountCents + START_PRICE_CENTS : START_PRICE_CENTS;
 }
 
 export function formatUsd(cents: number): string {

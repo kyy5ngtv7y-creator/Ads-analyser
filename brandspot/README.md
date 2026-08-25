@@ -1,11 +1,11 @@
 # BrandSpot
 
-Ein Werbeplatz-Auktionsspiel im Stil von [outbid.lol](https://outbid.lol) – aber für **Brands**:
+Ein Werbeplatz-Bietspiel im Stil von [outbid.lol](https://outbid.lol) – aber für **Brands**, mit Rangliste:
 
-- Es gibt genau **einen Spot** auf der Startseite.
-- Eine Brand übernimmt ihn, indem sie **mehr zahlt als die aktuelle Besitzerin** (Startpreis **$1**, Mindestschritt $1).
-- Die Brand präsentiert sich mit Name, Botschaft (max. 140 Zeichen), Link, Logo und Farbe.
-- Sie bleibt sichtbar, **bis jemand mehr bietet**. Alle früheren Besitzer landen in der Historie.
+- Jedes Gebot ab **$1** kommt in die Rangliste – man muss **nicht** über dem aktuellen Platz 1 liegen.
+- Die Brand mit dem **höchsten Gebot** bekommt den großen Spot ganz oben.
+- Bei **gleichem Betrag** gewinnt, wer **zuerst** geboten hat: Bieten 5 Brands je $10, steht die erste davon vorne, die anderen dahinter.
+- Jede Brand präsentiert sich mit Name, Botschaft (max. 140 Zeichen), Link, Logo und Farbe.
 
 ## Starten
 
@@ -19,7 +19,7 @@ Dann [http://localhost:3000](http://localhost:3000) öffnen.
 
 ### Demo-Modus (Standard)
 
-Ohne Stripe-Keys läuft alles **ohne echte Zahlung**: Wer das Formular abschickt, übernimmt den Spot sofort. Ideal zum Testen und Vorführen.
+Ohne Stripe-Keys läuft alles **ohne echte Zahlung**: Wer das Formular abschickt, landet sofort in der Rangliste. Ideal zum Testen und Vorführen.
 
 ### Echte Zahlungen mit Stripe
 
@@ -29,15 +29,14 @@ Ohne Stripe-Keys läuft alles **ohne echte Zahlung**: Wer das Formular abschickt
    - `NEXT_PUBLIC_BASE_URL` – öffentliche URL der Seite
 2. Im Stripe-Dashboard einen Webhook auf `https://deine-domain/api/stripe/webhook` mit dem Event `checkout.session.completed` anlegen. Lokal geht das mit der Stripe CLI: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
 
-Mit Keys erzeugt jedes Gebot eine Stripe-Checkout-Session; der Spot wird erst nach bestätigter Zahlung (Webhook) vergeben.
-
-**Bekannte MVP-Grenze:** Wird eine Brand zwischen Checkout-Start und Zahlungseingang überboten, wird die Zahlung nicht angewendet (Warnung im Server-Log) – Erstattung dann manuell über das Stripe-Dashboard.
+Mit Keys erzeugt jedes Gebot eine Stripe-Checkout-Session; das Gebot zählt erst nach bestätigter Zahlung (Webhook). Für die Tie-Break-Regel gilt dann der Zahlungszeitpunkt.
 
 ## Technik
 
 - **Next.js 15** (App Router) + **Tailwind CSS 4** + **TypeScript**
 - Persistenz: einfache JSON-Datei unter `data/spot.json` (wird automatisch angelegt, ist gitignored). Für ein Deployment auf Serverless-Plattformen (z.B. Vercel) sollte `src/lib/store.ts` gegen eine echte Datenbank (z.B. Supabase/Postgres) getauscht werden – die gesamte Persistenz steckt in dieser einen Datei.
+- Es werden maximal die 500 bestplatzierten Gebote gespeichert; die Gesamtsumme zählt trotzdem alle.
 - API:
-  - `GET /api/spot` – aktueller Zustand (Besitzerin, Mindestgebot, Historie, Gesamtsumme)
-  - `POST /api/bid` – Gebot abgeben (Demo: sofortige Übernahme / Stripe: Checkout-URL)
-  - `POST /api/stripe/webhook` – wendet die Übernahme nach bezahlter Checkout-Session an
+  - `GET /api/spot` – sortierte Rangliste, Gesamtsumme, Mindestgebot und Betrag für Platz 1
+  - `POST /api/bid` – Gebot abgeben (Demo: sofort in der Rangliste, Antwort enthält den Platz / Stripe: Checkout-URL)
+  - `POST /api/stripe/webhook` – nimmt das Gebot nach bezahlter Checkout-Session in die Rangliste auf

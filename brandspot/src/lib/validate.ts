@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_BID_CENTS } from "./types";
+import { MAX_BID_CENTS, START_PRICE_CENTS } from "./types";
 
 const httpUrl = z
   .string()
@@ -29,7 +29,7 @@ export const bidSchema = z.object({
   amountCents: z
     .number()
     .int()
-    .positive()
+    .min(START_PRICE_CENTS, "Mindestgebot ist $1")
     .max(MAX_BID_CENTS, "Gebot zu hoch"),
 });
 

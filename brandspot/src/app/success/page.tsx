@@ -9,13 +9,14 @@ export default function SuccessPage() {
       </h1>
       <p className="mt-4 text-zinc-400">
         Sobald Stripe die Zahlung bestätigt hat (dauert meist nur Sekunden),
-        gehört der Spot deiner Brand – bis dich jemand überbietet.
+        steht deine Brand in der Rangliste – je höher dein Gebot, desto weiter
+        oben. Bei gleichem Betrag zählt, wer zuerst geboten hat.
       </p>
       <Link
         href="/"
         className="mt-8 rounded-full bg-amber-400 px-8 py-4 text-lg font-black text-zinc-950 transition hover:bg-amber-300"
       >
-        Zum Spot →
+        Zur Rangliste →
       </Link>
     </main>
   );
