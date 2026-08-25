@@ -211,6 +211,8 @@ export default function Home() {
       amountTouched.current = false;
       setBrand("");
       setMessage("");
+      setCategory("Sonstiges");
+      setLocationType("online");
       setAddress("");
       setCountry("");
       setUrl("");
