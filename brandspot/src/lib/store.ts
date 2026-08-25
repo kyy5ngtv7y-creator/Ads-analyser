@@ -23,6 +23,7 @@ const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 const EMPTY_STATE: SpotState = {
   bids: [],
   totalRaisedCents: 0,
+  visitors: 0,
 };
 
 // Serialisiert alle Schreibzugriffe innerhalb dieses Prozesses,
@@ -57,6 +58,7 @@ async function readState(): Promise<SpotState> {
     bids: Array.isArray(parsed.bids) ? parsed.bids : [],
     totalRaisedCents:
       typeof parsed.totalRaisedCents === "number" ? parsed.totalRaisedCents : 0,
+    visitors: typeof parsed.visitors === "number" ? parsed.visitors : 0,
   };
 }
 
@@ -66,6 +68,7 @@ export async function getSpotState(): Promise<SpotState> {
 
 export type BidInput = {
   brand: string;
+  title: string | null;
   message: string;
   category: Category;
   locationType: LocationType;
@@ -73,7 +76,6 @@ export type BidInput = {
   country: string | null;
   url: string | null;
   logo: string | null;
-  color: string;
   amountCents: number;
 };
 
@@ -119,6 +121,7 @@ export async function applyBid(input: BidInput): Promise<ApplyResult> {
     const bid: Bid = {
       id: existing ? existing.id : randomUUID(),
       ...input,
+      clicks: existing ? existing.clicks : 0,
       // Bei einer Erhöhung zählt für den Gleichstand der Zeitpunkt,
       // zu dem der neue Betrag erreicht wurde.
       createdAt: new Date().toISOString(),
@@ -128,6 +131,7 @@ export async function applyBid(input: BidInput): Promise<ApplyResult> {
       : state.bids;
     const ranked = rankBids([...others, bid]).slice(0, BIDS_LIMIT);
     const next: SpotState = {
+      ...state,
       bids: ranked,
       totalRaisedCents: state.totalRaisedCents + paidCents,
     };
@@ -141,6 +145,27 @@ export async function applyBid(input: BidInput): Promise<ApplyResult> {
       paidCents,
       state: next,
     };
+  });
+}
+
+/** Zählt einen Klick auf einen Eintrag und liefert dessen Ziel-URL. */
+export async function registerClick(id: string): Promise<string | null> {
+  return enqueue(async () => {
+    const state = await readState();
+    const bid = state.bids.find((b) => b.id === id);
+    if (!bid || !bid.url) return null;
+    bid.clicks = (bid.clicks ?? 0) + 1;
+    await writeState(state);
+    return bid.url;
+  });
+}
+
+/** Zählt einen Besucher (der Client meldet sich einmal pro Sitzung). */
+export async function registerVisit(): Promise<void> {
+  return enqueue(async () => {
+    const state = await readState();
+    state.visitors = (state.visitors ?? 0) + 1;
+    await writeState(state);
   });
 }
 

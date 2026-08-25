@@ -55,6 +55,13 @@ const logo = z
 export const bidSchema = z
   .object({
     brand: z.string().trim().min(1, "Brand-Name fehlt").max(40),
+    title: z
+      .string()
+      .trim()
+      .max(70)
+      .optional()
+      .or(z.literal(""))
+      .transform((v) => (v ? v : null)),
     message: z.string().trim().min(1, "Beschreibung fehlt").max(200),
     category: z.enum(CATEGORIES).catch("Sonstiges"),
     locationType: z.enum(["online", "physical", "both"]),
@@ -74,10 +81,6 @@ export const bidSchema = z
       .transform((v) => (v ? v : null)),
     url: optionalHttpUrl,
     logo: logo.optional().or(z.literal("")).transform((v) => (v ? v : null)),
-    color: z
-      .string()
-      .regex(/^#[0-9a-fA-F]{6}$/, "Ungültige Farbe")
-      .transform((v) => v.toLowerCase()),
     amountCents: z
       .number()
       .int()

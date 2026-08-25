@@ -16,6 +16,7 @@ export type Category = (typeof CATEGORIES)[number];
 export type Bid = {
   id: string;
   brand: string;
+  title: string | null; // SEO-Titel, wie er in der Liste steht
   message: string;
   category: Category;
   locationType: LocationType;
@@ -23,19 +24,22 @@ export type Bid = {
   country: string | null;
   url: string | null;
   logo: string | null; // http(s)-URL oder data:image-URI (Upload)
-  color: string;
   amountCents: number;
+  clicks: number;
   createdAt: string;
 };
 
 export type SpotState = {
   bids: Bid[];
   totalRaisedCents: number;
+  visitors: number;
 };
 
 export type PublicSpot = {
   bids: Bid[]; // absteigend sortiert: höchster Betrag zuerst, bei Gleichstand das ältere Gebot
   totalRaisedCents: number;
+  visitors: number;
+  online: number;
   minBidCents: number;
   toBeatCents: number; // ab diesem Betrag ist man sicher auf Platz 1
   demoMode: boolean;

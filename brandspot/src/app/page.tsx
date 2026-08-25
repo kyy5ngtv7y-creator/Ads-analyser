@@ -12,30 +12,11 @@ import {
   type PublicSpot,
 } from "@/lib/types";
 
-const COLORS = [
-  "#e11d48",
-  "#f97316",
-  "#eab308",
-  "#22c55e",
-  "#06b6d4",
-  "#3b82f6",
-  "#8b5cf6",
-  "#111827",
-];
-
 const LOCATION_OPTIONS: { value: LocationType; label: string }[] = [
-  { value: "online", label: "🌐 Online" },
-  { value: "physical", label: "📍 Vor Ort" },
-  { value: "both", label: "🌐+📍 Beides" },
+  { value: "online", label: "Online" },
+  { value: "physical", label: "Vor Ort" },
+  { value: "both", label: "Beides" },
 ];
-
-function textOn(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.6 ? "#1c1b20" : "#ffffff";
-}
 
 function timeAgo(iso: string): string {
   const seconds = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
@@ -48,13 +29,30 @@ function timeAgo(iso: string): string {
   return `vor ${days} d`;
 }
 
+function domainOf(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
+
+function headingOf(bid: Bid): string {
+  return bid.title?.trim() ? bid.title : bid.brand;
+}
+
 function locationLine(bid: Bid): string {
   const parts: string[] = [];
-  if (bid.locationType === "online") parts.push("🌐 Online");
-  if (bid.locationType !== "online" && bid.address) parts.push(`📍 ${bid.address}`);
-  if (bid.locationType === "both") parts.push("🌐 auch online");
+  if (bid.locationType === "online") parts.push("Online");
+  if (bid.locationType !== "online" && bid.address) parts.push(bid.address);
+  if (bid.locationType === "both") parts.push("auch online");
   if (bid.country) parts.push(bid.country);
   return parts.join(" · ");
+}
+
+function formatCount(n: number): string {
+  return n.toLocaleString("de-DE");
 }
 
 /** Verkleinert ein Bild clientseitig auf max. 256px Kante und liefert eine data-URI. */
@@ -82,6 +80,32 @@ async function fileToLogoDataUrl(file: File): Promise<string> {
   return canvas.toDataURL("image/png");
 }
 
+function Avatar({ bid, size }: { bid: Bid; size: "lg" | "md" | "sm" }) {
+  const cls =
+    size === "lg"
+      ? "h-14 w-14 rounded-2xl text-xl"
+      : size === "md"
+        ? "h-11 w-11 rounded-xl text-lg"
+        : "h-8 w-8 rounded-lg text-sm";
+  if (bid.logo) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={bid.logo}
+        alt=""
+        className={`${cls} shrink-0 border border-stone-200 bg-white object-contain`}
+      />
+    );
+  }
+  return (
+    <div
+      className={`${cls} flex shrink-0 items-center justify-center border border-stone-200 bg-stone-100 font-bold text-stone-500`}
+    >
+      {bid.brand.slice(0, 1).toUpperCase()}
+    </div>
+  );
+}
+
 export default function Home() {
   const [spot, setSpot] = useState<PublicSpot | null>(null);
   const [filter, setFilter] = useState<"Alle" | Category>("Alle");
@@ -96,6 +120,7 @@ export default function Home() {
   const [rulesOpen, setRulesOpen] = useState(false);
 
   const [brand, setBrand] = useState("");
+  const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [category, setCategory] = useState<Category>("Sonstiges");
   const [locationType, setLocationType] = useState<LocationType>("online");
@@ -105,26 +130,40 @@ export default function Home() {
   const [heroUrl, setHeroUrl] = useState("");
   const [logo, setLogo] = useState("");
   const [logoError, setLogoError] = useState<string | null>(null);
-  const [color, setColor] = useState(COLORS[5]);
   const [amount, setAmount] = useState("");
-  const amountTouched = useRef(false);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const clientIdRef = useRef<string>("");
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/spot", { cache: "no-store" });
+      const res = await fetch(
+        `/api/spot?c=${encodeURIComponent(clientIdRef.current)}`,
+        { cache: "no-store" }
+      );
       if (!res.ok) return;
       const data: PublicSpot = await res.json();
       setSpot(data);
-      if (!amountTouched.current) {
-        setAmount(String(data.toBeatCents / 100));
-      }
     } catch {
       // Netzwerkfehler still ignorieren, nächster Poll versucht es erneut
     }
   }, []);
 
   useEffect(() => {
+    // Client-ID für den Online-Zähler, Besucher einmal pro Sitzung melden
+    try {
+      let id = sessionStorage.getItem("bs-client");
+      if (!id) {
+        id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        sessionStorage.setItem("bs-client", id);
+      }
+      clientIdRef.current = id;
+      if (!sessionStorage.getItem("bs-visited")) {
+        sessionStorage.setItem("bs-visited", "1");
+        fetch("/api/visit", { method: "POST" }).catch(() => {});
+      }
+    } catch {
+      clientIdRef.current = "anon";
+    }
     load();
     const interval = setInterval(load, 5000);
     return () => clearInterval(interval);
@@ -134,8 +173,9 @@ export default function Home() {
   const toBeat = spot?.toBeatCents ?? 100;
 
   const amountCents = useMemo(() => {
-    const value = Number(amount.replace(",", "."));
-    if (!Number.isFinite(value) || !Number.isInteger(value)) return null;
+    const value = Number(amount.replace(",", ".").trim());
+    if (!amount.trim() || !Number.isFinite(value) || !Number.isInteger(value))
+      return null;
     return value * 100;
   }, [amount]);
 
@@ -155,7 +195,10 @@ export default function Home() {
     if (prefillUrl) setUrl(prefillUrl);
     setFormOpen(true);
     setError(null);
-    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    setTimeout(
+      () => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      50
+    );
   }
 
   async function onLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -213,6 +256,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           brand,
+          title,
           message,
           category,
           locationType,
@@ -220,7 +264,6 @@ export default function Home() {
           country,
           url,
           logo,
-          color,
           amountCents,
         }),
       });
@@ -244,8 +287,8 @@ export default function Home() {
           : null
       );
       setFormOpen(false);
-      amountTouched.current = false;
       setBrand("");
+      setTitle("");
       setMessage("");
       setCategory("Sonstiges");
       setLocationType("online");
@@ -254,6 +297,7 @@ export default function Home() {
       setUrl("");
       setHeroUrl("");
       setLogo("");
+      setAmount("");
       window.scrollTo({ top: 0, behavior: "smooth" });
       await load();
       setTimeout(() => setWon(null), 7000);
@@ -274,32 +318,72 @@ export default function Home() {
     filter === "Alle"
       ? ranked
       : ranked.filter((b) => (b.category ?? "Sonstiges") === filter);
-  const top = visible[0] ?? null;
-  const rest = visible.slice(1);
+  // Kategorie-Sieger (für die "#1 in …"-Markierung) immer über alle Gebote
+  const categoryLeaders = useMemo(() => {
+    const map = new Map<Category, string>();
+    ranked.forEach((b) => {
+      const c = b.category ?? "Sonstiges";
+      if (!map.has(c)) map.set(c, b.id);
+    });
+    return map;
+  }, [ranked]);
+
+  const top3 = visible.slice(0, 3);
+  const rest = visible.slice(3);
+  const totalClicks = ranked.reduce((sum, b) => sum + (b.clicks ?? 0), 0);
   const inputCls =
-    "w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-red-500";
+    "w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-orange-600";
   const labelCls = "mb-1 block text-sm text-stone-500";
+
+  function metaLine(bid: Bid) {
+    const isCatLeader = categoryLeaders.get(bid.category ?? "Sonstiges") === bid.id;
+    return (
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-stone-500">
+        {isCatLeader && (
+          <span className="font-semibold text-orange-700">
+            #1 in {bid.category ?? "Sonstiges"}
+          </span>
+        )}
+        <span>{timeAgo(bid.createdAt)}</span>
+        {domainOf(bid.url) && (
+          <span className="font-medium text-stone-600">{domainOf(bid.url)}</span>
+        )}
+        <span className="font-medium text-stone-600">
+          {formatCount(bid.clicks ?? 0)} Klicks
+        </span>
+      </div>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-4 pb-24">
       {/* Header */}
-      <header className="flex items-center justify-between py-5">
-        <div className="text-xl font-black tracking-tight">
-          Brand<span className="text-red-600">Spot</span>
+      <header className="flex items-start justify-between py-5">
+        <div className="text-xl font-extrabold tracking-tight">
+          Brand<span className="text-orange-600">Spot</span>
         </div>
-        <div className="text-right text-xs text-stone-500">
+        <div className="text-right text-xs leading-5 text-stone-500">
           {spot && (
             <>
-              <span className="font-bold text-stone-900">
-                {formatUsd(spot.totalRaisedCents)}
-              </span>{" "}
-              insgesamt · {ranked.length}{" "}
-              {ranked.length === 1 ? "Gebot" : "Gebote"}
-              {spot.demoMode && (
-                <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-bold text-red-600">
-                  Demo
-                </span>
-              )}
+              <div>
+                <span className="font-bold text-stone-900">{spot.online}</span>{" "}
+                online ·{" "}
+                <span className="font-bold text-stone-900">
+                  {formatCount(spot.visitors)}
+                </span>{" "}
+                Besucher
+              </div>
+              <div>
+                <span className="font-bold text-stone-900">
+                  {formatUsd(spot.totalRaisedCents)}
+                </span>{" "}
+                geboten · {formatCount(totalClicks)} Klicks
+                {spot.demoMode && (
+                  <span className="ml-2 rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-bold text-orange-700">
+                    Demo
+                  </span>
+                )}
+              </div>
             </>
           )}
         </div>
@@ -307,19 +391,18 @@ export default function Home() {
 
       {/* Hero */}
       <section className="pb-6 pt-4 text-center">
-        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
-          Sichere dir <span className="text-red-600">Platz&nbsp;1</span>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+          Sichere dir <span className="text-orange-600">Platz&nbsp;1</span>
           <br />
           für{" "}
-          <span className="underline decoration-red-400 decoration-4 underline-offset-4">
+          <span className="underline decoration-orange-400 decoration-4 underline-offset-4">
             {formatUsd(toBeat)}
           </span>
         </h1>
         <p className="mx-auto mt-4 max-w-md text-sm text-stone-500">
-          Der Startpreis liegt bei <b className="text-stone-700">$1</b>. Wer
-          weniger als Platz 1 bietet, landet trotzdem auf der Liste – genau auf
-          dem Platz, den das Gebot hergibt. Bei gleichem Betrag steht vorne,
-          wer zuerst geboten hat.
+          Der Startpreis liegt bei <b className="text-stone-700">$1</b>, dein
+          Gebot bestimmst du selbst. Wer weniger als Platz 1 bietet, landet
+          trotzdem auf der Liste – genau auf dem Platz, den das Gebot hergibt.
         </p>
 
         <form
@@ -333,35 +416,22 @@ export default function Home() {
             value={heroUrl}
             onChange={(e) => setHeroUrl(e.target.value)}
             placeholder="https://deine-brand.com"
-            className="min-w-0 flex-1 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm outline-none focus:border-red-500"
+            className="min-w-0 flex-1 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm outline-none focus:border-orange-600"
           />
           <button
             type="submit"
-            className="rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-red-500"
+            className="rounded-full bg-orange-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-orange-500"
           >
             Mitbieten
           </button>
         </form>
-        <p className="mt-2 text-xs text-stone-400">
-          Website eintippen oder einfach auf „Mitbieten" – ab {formatUsd(minBid)}.
-        </p>
       </section>
 
       {won !== null && (
         <div className="mb-4 rounded-xl border border-green-300 bg-green-50 p-4 text-center font-semibold text-green-700">
-          {won.raised ? (
-            <>
-              🎉 Eintrag erhöht ({formatUsd(won.paidCents)} Differenz gezahlt)
-              – du bist auf <span className="font-black">Platz {won.rank}</span>
-              {won.rank === 1 ? " und hast den Spot!" : "!"}
-            </>
-          ) : (
-            <>
-              🎉 Dein Gebot ist drin – du bist auf{" "}
-              <span className="font-black">Platz {won.rank}</span>
-              {won.rank === 1 ? " und hast den Spot!" : "!"}
-            </>
-          )}
+          {won.raised
+            ? `Eintrag erhöht (${formatUsd(won.paidCents)} Differenz gezahlt) – du bist auf Platz ${won.rank}${won.rank === 1 ? " und hast den Spot." : "."}`
+            : `Dein Gebot ist drin – du bist auf Platz ${won.rank}${won.rank === 1 ? " und hast den Spot." : "."}`}
         </div>
       )}
 
@@ -406,6 +476,19 @@ export default function Home() {
 
           <div>
             <label className={labelCls}>
+              Titel <span className="opacity-60">(wie er in der Liste steht, optional)</span>
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={70}
+              placeholder="z.B. Acme – Werkzeuge für Profis"
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>
               Beschreibung * <span className="opacity-60">(max. 200 Zeichen)</span>
             </label>
             <textarea
@@ -429,7 +512,7 @@ export default function Home() {
                   onClick={() => setLocationType(opt.value)}
                   className={`rounded-lg border px-2 py-2 text-sm font-semibold transition ${
                     locationType === opt.value
-                      ? "border-red-500 bg-red-50 text-red-600"
+                      ? "border-orange-600 bg-orange-50 text-orange-700"
                       : "border-stone-300 text-stone-500 hover:text-stone-800"
                   }`}
                 >
@@ -500,7 +583,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setLogo("")}
-                  className="shrink-0 text-sm text-stone-400 hover:text-red-600"
+                  className="shrink-0 text-sm text-stone-400 hover:text-orange-700"
                 >
                   Entfernen
                 </button>
@@ -509,47 +592,22 @@ export default function Home() {
             {logoError && <p className="mt-1 text-xs text-red-600">{logoError}</p>}
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={labelCls}>Spot-Farbe</label>
-              <div className="flex gap-2 pt-1">
-                {COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setColor(c)}
-                    aria-label={`Farbe ${c}`}
-                    className={`h-7 w-7 rounded-full transition ${
-                      color === c
-                        ? "ring-2 ring-red-500 ring-offset-2"
-                        : "opacity-70 hover:opacity-100"
-                    }`}
-                    style={{ backgroundColor: c }}
-                  />
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className={labelCls}>
-                Dein Gebot in $ *{" "}
-                <span className="opacity-60">
-                  (ganze Dollar, mind. {formatUsd(minBid)})
-                </span>
-              </label>
-              <input
-                value={amount}
-                onChange={(e) => {
-                  amountTouched.current = true;
-                  setAmount(e.target.value);
-                }}
-                inputMode="numeric"
-                required
-                className={`${inputCls} text-lg font-bold`}
-              />
-            </div>
+          <div>
+            <label className={labelCls}>
+              Dein Gebot in $ *{" "}
+              <span className="opacity-60">(ganze Dollar, frei wählbar)</span>
+            </label>
+            <input
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              inputMode="numeric"
+              required
+              placeholder={`mind. ${formatUsd(minBid).slice(1)}`}
+              className={`${inputCls} text-lg font-bold`}
+            />
           </div>
           {existingListing ? (
-            <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+            <p className="rounded-lg bg-orange-50 p-3 text-xs text-orange-900">
               Diese {existingListing.bid.url ? "Website" : "Brand"} steht schon
               mit {formatUsd(existingListing.bid.amountCents)} auf Platz{" "}
               {existingListing.rank}. Dein Gebot <b>erhöht diesen Eintrag</b> –
@@ -564,7 +622,7 @@ export default function Home() {
             ranked.length > 0 && (
               <p className="text-xs text-stone-500">
                 {amountCents !== null && amountCents >= toBeat
-                  ? "Damit landest du auf Platz 1. 🏆"
+                  ? "Damit landest du auf Platz 1."
                   : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem auf die Liste.`}
               </p>
             )
@@ -580,7 +638,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 rounded-full bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-500 disabled:opacity-50"
+              className="flex-1 rounded-full bg-orange-600 px-6 py-3 font-bold text-white transition hover:bg-orange-500 disabled:opacity-50"
             >
               {submitting
                 ? "Einen Moment…"
@@ -608,14 +666,14 @@ export default function Home() {
 
       {/* Kategorie-Filter */}
       {ranked.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="mb-5 flex flex-wrap items-center gap-2">
           {(["Alle", ...usedCategories] as const).map((c) => (
             <button
               key={c}
               onClick={() => setFilter(c as "Alle" | Category)}
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 filter === c
-                  ? "bg-stone-900 text-white"
+                  ? "bg-orange-600 text-white"
                   : "border border-stone-300 bg-white text-stone-500 hover:text-stone-900"
               }`}
             >
@@ -625,121 +683,135 @@ export default function Home() {
         </div>
       )}
 
-      {/* Platz 1 */}
-      {top && (
-        <div
-          className="mb-3 rounded-2xl p-6 shadow-md"
-          style={{ backgroundColor: top.color, color: textOn(top.color) }}
-        >
-          <div className="flex items-start gap-4">
-            <div className="rounded-full bg-black/20 px-2.5 py-1 text-sm font-black">
-              #1
-            </div>
-            {top.logo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={top.logo}
-                alt={top.brand}
-                className="h-14 w-14 shrink-0 rounded-xl bg-white/20 object-contain"
-              />
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-baseline gap-x-3">
-                <span className="break-words text-2xl font-black">
-                  {top.brand}
-                </span>
-                <span className="text-sm font-bold opacity-80">
-                  {formatUsd(top.amountCents)}
-                </span>
-              </div>
-              <p className="mt-1 break-words text-sm opacity-90">{top.message}</p>
-              <div className="mt-2 text-xs font-semibold opacity-80">
-                {locationLine(top)}
-                {top.category ? ` · ${top.category}` : ""} · {timeAgo(top.createdAt)}
-              </div>
-            </div>
-            {top.url && (
-              <a
-                href={top.url}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="shrink-0 rounded-full px-4 py-2 text-xs font-bold shadow"
-                style={{ backgroundColor: textOn(top.color), color: top.color }}
+      {/* Top 3 */}
+      {top3.length > 0 && (
+        <div className="space-y-3">
+          {top3.map((b, i) => {
+            const isFirst = i === 0;
+            return (
+              <article
+                key={b.id}
+                className={`rounded-2xl border bg-white ${
+                  isFirst
+                    ? "border-orange-300 bg-orange-50/60 p-6 shadow-sm"
+                    : "border-orange-200/70 bg-orange-50/25 p-5"
+                }`}
               >
-                Besuchen →
-              </a>
-            )}
-          </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex flex-col items-center gap-2">
+                    <span
+                      className={`flex items-center justify-center rounded-full font-extrabold text-white ${
+                        isFirst
+                          ? "h-9 w-9 bg-orange-600 text-sm"
+                          : "h-8 w-8 bg-orange-400 text-xs"
+                      }`}
+                    >
+                      #{i + 1}
+                    </span>
+                    <Avatar bid={b} size={isFirst ? "lg" : "md"} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h3
+                        className={`min-w-0 break-words font-extrabold leading-snug ${
+                          isFirst ? "text-2xl" : "text-lg"
+                        }`}
+                      >
+                        {b.url ? (
+                          <a
+                            href={`/go/${b.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow"
+                            className="hover:text-orange-700"
+                          >
+                            {headingOf(b)}
+                          </a>
+                        ) : (
+                          headingOf(b)
+                        )}
+                      </h3>
+                      <span
+                        className={`shrink-0 font-extrabold tabular-nums text-orange-600 ${
+                          isFirst ? "text-2xl" : "text-lg"
+                        }`}
+                      >
+                        {formatUsd(b.amountCents)}
+                      </span>
+                    </div>
+                    <p
+                      className={`mt-1 break-words text-stone-600 ${
+                        isFirst ? "text-sm" : "text-sm line-clamp-2"
+                      }`}
+                    >
+                      {b.message}
+                    </p>
+                    <p className="mt-1 text-xs text-stone-500">
+                      {locationLine(b)}
+                    </p>
+                    {metaLine(b)}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
 
-      {/* Liste ab Platz 2 */}
+      {/* Rangliste ab Platz 4 */}
       {rest.length > 0 && (
-        <ul className="space-y-2">
-          {rest.map((b: Bid, i: number) => (
-            <li
-              key={b.id}
-              className="flex items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3"
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="w-8 shrink-0 text-right text-sm font-black text-stone-400">
-                  #{i + 2}
+        <section className="mt-8">
+          <h2 className="mb-2 text-lg font-bold text-stone-800">
+            Die Rangliste
+          </h2>
+          <ol className="divide-y divide-stone-200">
+            {rest.map((b, i) => (
+              <li key={b.id} className="flex items-center gap-3 py-3">
+                <span className="w-9 shrink-0 text-right text-sm font-bold text-stone-400">
+                  #{i + 4}
                 </span>
-                {b.logo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={b.logo}
-                    alt=""
-                    className="h-9 w-9 shrink-0 rounded-lg border border-stone-200 bg-white object-contain"
-                  />
-                ) : (
-                  <span
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: b.color }}
-                  />
-                )}
-                <div className="min-w-0">
-                  <div className="flex items-baseline gap-2">
+                <Avatar bid={b} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-bold">
                     {b.url ? (
                       <a
-                        href={b.url}
+                        href={`/go/${b.id}`}
                         target="_blank"
                         rel="noopener noreferrer nofollow"
-                        className="truncate font-bold hover:text-red-600"
+                        className="hover:text-orange-700"
                       >
-                        {b.brand}
+                        {headingOf(b)}
                       </a>
                     ) : (
-                      <span className="truncate font-bold">{b.brand}</span>
+                      headingOf(b)
                     )}
-                    <span className="hidden truncate text-xs text-stone-500 sm:inline">
-                      {b.message}
-                    </span>
                   </div>
-                  <div className="truncate text-xs text-stone-400">
-                    {locationLine(b)}
-                    {b.category ? ` · ${b.category}` : ""}
+                  <div className="truncate text-xs text-stone-500">
+                    {[domainOf(b.url), locationLine(b), `${formatCount(b.clicks ?? 0)} Klicks`]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </div>
                 </div>
-              </div>
-              <div className="shrink-0 text-right">
-                <div className="text-sm font-bold">{formatUsd(b.amountCents)}</div>
-                <div className="text-xs text-stone-400">{timeAgo(b.createdAt)}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div className="shrink-0 text-right">
+                  <div className="text-sm font-bold tabular-nums text-orange-600">
+                    {formatUsd(b.amountCents)}
+                  </div>
+                  <div className="text-xs text-stone-400">{timeAgo(b.createdAt)}</div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
       )}
 
       {ranked.length === 0 && (
         <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center">
-          <div className="text-2xl font-black">Platz 1 ist noch frei.</div>
+          <div className="text-2xl font-extrabold">Platz 1 ist noch frei.</div>
           <p className="mt-2 text-sm text-stone-500">
             Sei die erste Brand auf der Liste – für einen einzigen Dollar.
           </p>
           <button
             onClick={() => openForm()}
-            className="mt-5 rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-red-500"
+            className="mt-5 rounded-full bg-orange-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-orange-500"
           >
             Jetzt Platz 1 sichern
           </button>
@@ -759,8 +831,6 @@ export default function Home() {
         >
           Regeln
         </button>
-        <span className="mx-2">·</span>
-        BrandSpot – inspiriert von outbid.lol. Wer mehr bietet, steht oben.
       </footer>
 
       {rulesOpen && (
@@ -773,7 +843,7 @@ export default function Home() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-xl font-black">Regeln</h2>
+              <h2 className="text-xl font-extrabold">Regeln</h2>
               <button
                 onClick={() => setRulesOpen(false)}
                 aria-label="Schließen"
@@ -788,7 +858,7 @@ export default function Home() {
             </p>
             <h3 className="mt-4 font-bold">So funktioniert die Rangliste</h3>
             <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
-              <li>Gebote sind ganze US-Dollar, Startpreis $1.</li>
+              <li>Gebote sind ganze US-Dollar, Startpreis $1 – die Höhe bestimmst du selbst.</li>
               <li>
                 Wer weniger als Platz 1 zahlt, landet trotzdem auf der Liste –
                 genau auf dem Platz, den das Gebot hergibt.
@@ -806,7 +876,7 @@ export default function Home() {
             <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
               <li>
                 Deine Brand – online (mit Website), vor Ort (mit Adresse) oder
-                beides. Mit Beschreibung, Land, Kategorie und Logo.
+                beides. Mit Titel, Beschreibung, Land, Kategorie und Logo.
               </li>
               <li>
                 Chat- und Invite-Links sind nicht erlaubt – Telegram, WhatsApp,
@@ -821,8 +891,8 @@ export default function Home() {
             <h3 className="mt-4 font-bold">Nach der Zahlung</h3>
             <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
               <li>
-                Dein Eintrag ist öffentlich. Klicks gehen zur eingereichten
-                URL – ohne Query-Parameter.
+                Dein Eintrag ist öffentlich, Klicks werden gezählt und gehen
+                zur eingereichten URL – ohne Query-Parameter.
               </li>
               <li>Erst die abgeschlossene Zahlung sichert den Rang.</li>
             </ul>
