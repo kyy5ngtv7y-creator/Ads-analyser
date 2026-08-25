@@ -1,9 +1,14 @@
+export type LocationType = "online" | "physical" | "both";
+
 export type Bid = {
   id: string;
   brand: string;
   message: string;
+  locationType: LocationType;
+  address: string | null;
+  country: string | null;
   url: string | null;
-  imageUrl: string | null;
+  logo: string | null; // http(s)-URL oder data:image-URI (Upload)
   color: string;
   amountCents: number;
   createdAt: string;

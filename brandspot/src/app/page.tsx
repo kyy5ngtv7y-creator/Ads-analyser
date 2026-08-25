@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { formatUsd, type Bid, type PublicSpot } from "@/lib/types";
+import {
+  formatUsd,
+  type Bid,
+  type LocationType,
+  type PublicSpot,
+} from "@/lib/types";
 
 const COLORS = [
   "#e11d48",
@@ -12,6 +17,12 @@ const COLORS = [
   "#3b82f6",
   "#8b5cf6",
   "#111827",
+];
+
+const LOCATION_OPTIONS: { value: LocationType; label: string }[] = [
+  { value: "online", label: "🌐 Online" },
+  { value: "physical", label: "📍 Vor Ort" },
+  { value: "both", label: "🌐+📍 Beides" },
 ];
 
 function textOn(hex: string): string {
@@ -33,6 +44,40 @@ function timeAgo(iso: string): string {
   return `vor ${days} d`;
 }
 
+function locationLine(bid: Bid): string {
+  const parts: string[] = [];
+  if (bid.locationType === "online") parts.push("🌐 Online");
+  if (bid.locationType !== "online" && bid.address) parts.push(`📍 ${bid.address}`);
+  if (bid.locationType === "both") parts.push("🌐 auch online");
+  if (bid.country) parts.push(bid.country);
+  return parts.join(" · ");
+}
+
+/** Verkleinert ein Bild clientseitig auf max. 256px Kante und liefert eine data-URI. */
+async function fileToLogoDataUrl(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("read failed"));
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("decode failed"));
+    el.src = dataUrl;
+  });
+  const max = 256;
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.width * scale));
+  canvas.height = Math.max(1, Math.round(img.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas failed");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/png");
+}
+
 export default function Home() {
   const [spot, setSpot] = useState<PublicSpot | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -42,8 +87,12 @@ export default function Home() {
 
   const [brand, setBrand] = useState("");
   const [message, setMessage] = useState("");
+  const [locationType, setLocationType] = useState<LocationType>("online");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
   const [url, setUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [logo, setLogo] = useState("");
+  const [logoError, setLogoError] = useState<string | null>(null);
   const [color, setColor] = useState(COLORS[5]);
   const [amount, setAmount] = useState("");
   const amountTouched = useRef(false);
@@ -78,6 +127,26 @@ export default function Home() {
     return Math.round(value * 100);
   }, [amount]);
 
+  async function onLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setLogoError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setLogoError("Bitte wähle eine Bilddatei.");
+      return;
+    }
+    try {
+      const dataUrl = await fileToLogoDataUrl(file);
+      if (dataUrl.length > 400_000) {
+        setLogoError("Das Logo ist auch verkleinert noch zu groß.");
+        return;
+      }
+      setLogo(dataUrl);
+    } catch {
+      setLogoError("Das Bild konnte nicht gelesen werden.");
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (submitting) return;
@@ -85,6 +154,14 @@ export default function Home() {
 
     if (amountCents === null || amountCents < minBid) {
       setError(`Dein Gebot muss mindestens ${formatUsd(minBid)} sein.`);
+      return;
+    }
+    if (locationType !== "online" && !address.trim()) {
+      setError("Für einen physischen Ort brauchen wir eine Adresse.");
+      return;
+    }
+    if (locationType !== "physical" && !url.trim()) {
+      setError("Für eine Online-Brand brauchen wir eine Website.");
       return;
     }
 
@@ -96,8 +173,11 @@ export default function Home() {
         body: JSON.stringify({
           brand,
           message,
+          locationType,
+          address,
+          country,
           url,
-          imageUrl,
+          logo,
           color,
           amountCents,
         }),
@@ -117,8 +197,10 @@ export default function Home() {
       amountTouched.current = false;
       setBrand("");
       setMessage("");
+      setAddress("");
+      setCountry("");
       setUrl("");
-      setImageUrl("");
+      setLogo("");
       await load();
       setTimeout(() => setWonRank(null), 6000);
     } catch {
@@ -133,6 +215,8 @@ export default function Home() {
   const rest = ranked.slice(1);
   const cardColor = top?.color ?? "#1f2937";
   const cardText = textOn(cardColor);
+  const inputCls =
+    "w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400";
 
   return (
     <main className="mx-auto max-w-3xl px-4 pb-24">
@@ -168,7 +252,8 @@ export default function Home() {
         Jedes Gebot ab{" "}
         <span className="font-semibold text-zinc-200">$1</span> kommt in die
         Rangliste. Wer am meisten bietet, bekommt den großen Spot – bei
-        gleichem Betrag gewinnt, wer <span className="font-semibold text-zinc-200">zuerst</span> geboten hat.
+        gleichem Betrag gewinnt, wer{" "}
+        <span className="font-semibold text-zinc-200">zuerst</span> geboten hat.
       </p>
 
       {wonRank !== null && (
@@ -192,12 +277,12 @@ export default function Home() {
             <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
               Platz 1 gehört gerade
             </div>
-            {top.imageUrl && (
+            {top.logo && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={top.imageUrl}
+                src={top.logo}
                 alt={top.brand}
-                className="mx-auto mt-6 h-24 w-24 rounded-2xl object-cover shadow-lg"
+                className="mx-auto mt-6 h-24 w-24 rounded-2xl bg-white/10 object-contain shadow-lg"
               />
             )}
             <h1 className="mt-4 break-words text-5xl font-black tracking-tight sm:text-6xl">
@@ -206,15 +291,18 @@ export default function Home() {
             <p className="mx-auto mt-4 max-w-md break-words text-lg opacity-90">
               {top.message}
             </p>
+            <div className="mt-4 text-sm font-semibold opacity-80">
+              {locationLine(top)}
+            </div>
             {top.url && (
               <a
                 href={top.url}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
-                className="mt-6 inline-block rounded-full px-6 py-2.5 text-sm font-bold shadow"
+                className="mt-5 inline-block rounded-full px-6 py-2.5 text-sm font-bold shadow"
                 style={{ backgroundColor: cardText, color: cardColor }}
               >
-                Zur Brand →
+                Zur Website →
               </a>
             )}
             <div className="mt-8 text-sm opacity-70">
@@ -260,7 +348,9 @@ export default function Home() {
             onSubmit={submit}
             className="mx-auto max-w-md space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-left"
           >
-            <h2 className="text-center text-xl font-bold">Gib dein Gebot ab</h2>
+            <h2 className="text-center text-xl font-bold">
+              Präsentiere deine Brand
+            </h2>
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
@@ -272,49 +362,121 @@ export default function Home() {
                 maxLength={40}
                 required
                 placeholder="z.B. Acme GmbH"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400"
+                className={inputCls}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
-                Deine Botschaft * <span className="opacity-60">(max. 140 Zeichen)</span>
+                Beschreibung *{" "}
+                <span className="opacity-60">(max. 200 Zeichen)</span>
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                maxLength={140}
+                maxLength={200}
                 required
-                rows={2}
-                placeholder="Was soll die Welt über deine Brand wissen?"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400"
+                rows={3}
+                placeholder="Was macht deine Brand? Was soll die Welt wissen?"
+                className={inputCls}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
-                Link zu deiner Seite (optional)
+                Wo gibt es deine Brand? *
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {LOCATION_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setLocationType(opt.value)}
+                    className={`rounded-lg border px-2 py-2 text-sm font-semibold transition ${
+                      locationType === opt.value
+                        ? "border-amber-400 bg-amber-400/10 text-amber-300"
+                        : "border-zinc-700 text-zinc-400 hover:text-zinc-200"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {locationType !== "online" && (
+              <div>
+                <label className="mb-1 block text-sm text-zinc-400">
+                  Adresse *
+                </label>
+                <input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  maxLength={160}
+                  required
+                  placeholder="Straße Nr., PLZ Ort"
+                  className={inputCls}
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="mb-1 block text-sm text-zinc-400">Land</label>
+              <input
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                maxLength={56}
+                placeholder="z.B. Deutschland"
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-zinc-400">
+                Website {locationType !== "physical" ? "*" : "(optional)"}
               </label>
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 type="url"
+                required={locationType !== "physical"}
                 placeholder="https://deine-brand.com"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400"
+                className={inputCls}
               />
             </div>
 
             <div>
               <label className="mb-1 block text-sm text-zinc-400">
-                Logo-URL (optional)
+                Logo (optional)
               </label>
-              <input
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                type="url"
-                placeholder="https://…/logo.png"
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400"
-              />
+              <div className="flex items-center gap-3">
+                {logo && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={logo}
+                    alt="Logo-Vorschau"
+                    className="h-12 w-12 rounded-lg bg-white/10 object-contain"
+                  />
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={onLogoChange}
+                  className="block w-full text-sm text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-zinc-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-zinc-200 hover:file:bg-zinc-700"
+                />
+                {logo && (
+                  <button
+                    type="button"
+                    onClick={() => setLogo("")}
+                    className="shrink-0 text-sm text-zinc-500 hover:text-rose-400"
+                  >
+                    Entfernen
+                  </button>
+                )}
+              </div>
+              {logoError && (
+                <p className="mt-1 text-xs text-rose-400">{logoError}</p>
+              )}
             </div>
 
             <div>
@@ -352,7 +514,7 @@ export default function Home() {
                 }}
                 inputMode="decimal"
                 required
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-lg font-bold outline-none focus:border-amber-400"
+                className={`${inputCls} text-lg font-bold`}
               />
               {top && (
                 <p className="mt-1 text-xs text-zinc-500">
@@ -416,25 +578,38 @@ export default function Home() {
                   <span className="w-8 shrink-0 text-right font-black text-zinc-500">
                     #{i + 2}
                   </span>
-                  <span
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: b.color }}
-                  />
-                  {b.url ? (
-                    <a
-                      href={b.url}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="truncate font-semibold hover:text-amber-300"
-                    >
-                      {b.brand}
-                    </a>
+                  {b.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={b.logo}
+                      alt=""
+                      className="h-8 w-8 shrink-0 rounded-lg bg-white/10 object-contain"
+                    />
                   ) : (
-                    <span className="truncate font-semibold">{b.brand}</span>
+                    <span
+                      className="h-3 w-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: b.color }}
+                    />
                   )}
-                  <span className="hidden truncate text-sm text-zinc-500 sm:inline">
-                    {b.message}
-                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      {b.url ? (
+                        <a
+                          href={b.url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="truncate font-semibold hover:text-amber-300"
+                        >
+                          {b.brand}
+                        </a>
+                      ) : (
+                        <span className="truncate font-semibold">{b.brand}</span>
+                      )}
+                    </div>
+                    <div className="truncate text-xs text-zinc-500">
+                      {locationLine(b) || b.message}
+                    </div>
+                  </div>
                 </div>
                 <div className="ml-3 shrink-0 text-right text-sm">
                   <div className="font-bold">{formatUsd(b.amountCents)}</div>

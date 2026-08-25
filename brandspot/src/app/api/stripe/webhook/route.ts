@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { applyBid } from "@/lib/store";
+import { applyBid, takePendingBid } from "@/lib/store";
 import { getStripe, stripeEnabled } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
@@ -29,19 +29,18 @@ export async function POST(request: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    const m = session.metadata ?? {};
-    const amountCents = Number(m.amountCents);
-    if (m.brand && m.message && Number.isInteger(amountCents) && amountCents > 0) {
-      // Jedes bezahlte Gebot landet in der Rangliste – die Platzierung
-      // ergibt sich aus Betrag und Zahlungszeitpunkt.
-      await applyBid({
-        brand: m.brand,
-        message: m.message,
-        url: m.url || null,
-        imageUrl: m.imageUrl || null,
-        color: /^#[0-9a-f]{6}$/.test(m.color ?? "") ? m.color : "#111827",
-        amountCents,
-      });
+    const token = session.metadata?.token;
+    if (token) {
+      // Geparktes Gebot einlösen – jedes bezahlte Gebot landet in der
+      // Rangliste, die Platzierung ergibt sich aus Betrag und Zahlungszeitpunkt.
+      const input = await takePendingBid(token);
+      if (input) {
+        await applyBid(input);
+      } else {
+        console.warn(
+          `BrandSpot: Kein geparktes Gebot für Token ${token} (Session ${session.id}) – vermutlich abgelaufen.`
+        );
+      }
     }
   }
 

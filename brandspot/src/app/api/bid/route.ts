@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { applyBid } from "@/lib/store";
+import { addPendingBid, applyBid } from "@/lib/store";
 import { baseUrl, getStripe, stripeEnabled } from "@/lib/stripe";
 import { bidSchema } from "@/lib/validate";
 
@@ -26,7 +26,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, demo: true, rank: result.rank });
   }
 
-  // Stripe-Modus: Checkout-Session erstellen, Gebot zählt erst nach Zahlung (Webhook).
+  // Stripe-Modus: Gebot serverseitig parken (Logo-Uploads passen nicht in
+  // Stripe-Metadata) und Checkout-Session mit Token erstellen. Das Gebot
+  // zählt erst nach bestätigter Zahlung (Webhook).
+  const token = await addPendingBid(bid);
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
@@ -38,19 +41,12 @@ export async function POST(request: Request) {
           unit_amount: bid.amountCents,
           product_data: {
             name: `BrandSpot-Gebot: ${bid.brand}`,
-            description: bid.message,
+            description: bid.message.slice(0, 140),
           },
         },
       },
     ],
-    metadata: {
-      brand: bid.brand,
-      message: bid.message,
-      url: bid.url ?? "",
-      imageUrl: bid.imageUrl ?? "",
-      color: bid.color,
-      amountCents: String(bid.amountCents),
-    },
+    metadata: { token },
     success_url: `${baseUrl()}/success`,
     cancel_url: `${baseUrl()}/`,
   });
