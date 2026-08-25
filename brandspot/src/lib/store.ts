@@ -2,7 +2,9 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import {
+  listingKeyFor,
   rankBids,
+  START_PRICE_CENTS,
   type Bid,
   type Category,
   type LocationType,
@@ -75,35 +77,86 @@ export type BidInput = {
   amountCents: number;
 };
 
-export type ApplyResult = {
-  bid: Bid;
-  rank: number; // 1-basiert
-  state: SpotState;
-};
+export type ApplyResult =
+  | {
+      ok: true;
+      bid: Bid;
+      rank: number; // 1-basiert
+      raised: boolean; // true = bestehender Eintrag wurde erhöht
+      paidCents: number; // gezahlter Betrag (bei Erhöhung nur die Differenz)
+      state: SpotState;
+    }
+  | { ok: false; reason: "raise_too_low"; currentCents: number };
 
 /**
- * Fügt ein Gebot der Rangliste hinzu. Jedes Gebot ab dem Mindestpreis
- * wird angenommen – der Betrag bestimmt nur die Platzierung, bei
- * Gleichstand gewinnt das frühere Gebot.
+ * Fügt ein Gebot der Rangliste hinzu oder erhöht einen bestehenden
+ * Eintrag: Einträge sind über ihre Website (bzw. den Brand-Namen)
+ * verknüpft – dieselbe Website erneut einzutragen setzt das Gebot des
+ * Eintrags auf den neuen Betrag, gezahlt wird nur die Differenz.
+ * Niemand anderes kann einen Eintrag übernehmen: Jede andere Website
+ * ist ein eigener Eintrag. Der Betrag bestimmt die Platzierung, bei
+ * Gleichstand steht vorne, wer den Betrag zuerst erreicht hat.
  */
 export async function applyBid(input: BidInput): Promise<ApplyResult> {
   return enqueue(async () => {
     const state = await readState();
+    const key = listingKeyFor(input.url, input.brand);
+    const existing = state.bids.find(
+      (b) => listingKeyFor(b.url, b.brand) === key
+    );
+
+    if (existing && input.amountCents <= existing.amountCents) {
+      return {
+        ok: false,
+        reason: "raise_too_low",
+        currentCents: existing.amountCents,
+      };
+    }
+
+    const paidCents = existing
+      ? input.amountCents - existing.amountCents
+      : input.amountCents;
     const bid: Bid = {
-      id: randomUUID(),
+      id: existing ? existing.id : randomUUID(),
       ...input,
+      // Bei einer Erhöhung zählt für den Gleichstand der Zeitpunkt,
+      // zu dem der neue Betrag erreicht wurde.
       createdAt: new Date().toISOString(),
     };
-    const ranked = rankBids([...state.bids, bid]).slice(0, BIDS_LIMIT);
+    const others = existing
+      ? state.bids.filter((b) => b.id !== existing.id)
+      : state.bids;
+    const ranked = rankBids([...others, bid]).slice(0, BIDS_LIMIT);
     const next: SpotState = {
       bids: ranked,
-      totalRaisedCents: state.totalRaisedCents + input.amountCents,
+      totalRaisedCents: state.totalRaisedCents + paidCents,
     };
     await writeState(next);
     const rank = ranked.findIndex((b) => b.id === bid.id) + 1;
-    return { bid, rank: rank === 0 ? ranked.length + 1 : rank, state: next };
+    return {
+      ok: true,
+      bid,
+      rank: rank === 0 ? ranked.length + 1 : rank,
+      raised: Boolean(existing),
+      paidCents,
+      state: next,
+    };
   });
 }
+
+/** Aktueller Stand eines Eintrags zu einer Website / einem Brand-Namen. */
+export async function findListing(
+  url: string | null,
+  brand: string
+): Promise<Bid | null> {
+  const state = await readState();
+  const key = listingKeyFor(url, brand);
+  return (
+    state.bids.find((b) => listingKeyFor(b.url, b.brand) === key) ?? null
+  );
+}
+
+export { START_PRICE_CENTS };
 
 async function writeState(state: SpotState): Promise<void> {
   await writeJson(DATA_FILE, state);

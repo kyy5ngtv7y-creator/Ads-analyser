@@ -35,7 +35,14 @@ export async function POST(request: Request) {
       // Rangliste, die Platzierung ergibt sich aus Betrag und Zahlungszeitpunkt.
       const input = await takePendingBid(token);
       if (input) {
-        await applyBid(input);
+        const result = await applyBid(input);
+        if (!result.ok) {
+          // Zwischen Checkout und Zahlung wurde derselbe Eintrag bereits
+          // höher gesetzt – Erstattung manuell über das Stripe-Dashboard.
+          console.warn(
+            `BrandSpot: Zahlung ${session.id} (${input.brand}, Ziel ${input.amountCents}¢) kam zu spät – Eintrag steht schon bei ${result.currentCents}¢.`
+          );
+        }
       } else {
         console.warn(
           `BrandSpot: Kein geparktes Gebot für Token ${token} (Session ${session.id}) – vermutlich abgelaufen.`

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { CATEGORIES, MAX_BID_CENTS, START_PRICE_CENTS } from "./types";
+import {
+  CATEGORIES,
+  cleanUrl,
+  isBlockedUrl,
+  MAX_BID_CENTS,
+  START_PRICE_CENTS,
+} from "./types";
 
 function isHttpUrl(value: string): boolean {
   try {
@@ -10,11 +16,28 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
-const httpUrl = z
+// Leer erlaubt (→ null); sonst http(s) und keine Chat-/Invite-Links.
+// Query-Parameter und Fragmente werden entfernt – Klicks gehen zur
+// eingereichten URL ohne Tracking-Parameter.
+const optionalHttpUrl = z
   .string()
   .trim()
   .max(500)
-  .refine(isHttpUrl, { message: "Nur http(s)-Links sind erlaubt" });
+  .optional()
+  .transform((v) => v ?? "")
+  .superRefine((v, ctx) => {
+    if (!v) return;
+    if (!isHttpUrl(v)) {
+      ctx.addIssue({ code: "custom", message: "Nur http(s)-Links sind erlaubt" });
+    } else if (isBlockedUrl(v)) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Chat- und Invite-Links (Telegram, WhatsApp, Discord, …) sind nicht erlaubt",
+      });
+    }
+  })
+  .transform((v) => (v ? (cleanUrl(v) ?? v) : null));
 
 // Logo: entweder ein http(s)-Link oder ein hochgeladenes Bild als data-URI
 // (max. ~300 KB, nur gängige Bildformate – kein SVG, um Script-Inhalte auszuschließen).
@@ -49,7 +72,7 @@ export const bidSchema = z
       .optional()
       .or(z.literal(""))
       .transform((v) => (v ? v : null)),
-    url: httpUrl.optional().or(z.literal("")).transform((v) => (v ? v : null)),
+    url: optionalHttpUrl,
     logo: logo.optional().or(z.literal("")).transform((v) => (v ? v : null)),
     color: z
       .string()
@@ -59,7 +82,8 @@ export const bidSchema = z
       .number()
       .int()
       .min(START_PRICE_CENTS, "Mindestgebot ist $1")
-      .max(MAX_BID_CENTS, "Gebot zu hoch"),
+      .max(MAX_BID_CENTS, "Gebot zu hoch")
+      .multipleOf(100, "Gebote nur in ganzen Dollar"),
   })
   .superRefine((data, ctx) => {
     if (data.locationType !== "online" && !data.address) {

@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CATEGORIES,
+  cleanUrl,
   formatUsd,
+  listingKeyFor,
   type Bid,
   type Category,
   type LocationType,
@@ -86,7 +88,12 @@ export default function Home() {
   const [formOpen, setFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [wonRank, setWonRank] = useState<number | null>(null);
+  const [won, setWon] = useState<{
+    rank: number;
+    raised: boolean;
+    paidCents: number;
+  } | null>(null);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   const [brand, setBrand] = useState("");
   const [message, setMessage] = useState("");
@@ -127,11 +134,22 @@ export default function Home() {
   const toBeat = spot?.toBeatCents ?? 100;
 
   const amountCents = useMemo(() => {
-    const normalized = amount.replace(",", ".");
-    const value = Number(normalized);
-    if (!Number.isFinite(value)) return null;
-    return Math.round(value * 100);
+    const value = Number(amount.replace(",", "."));
+    if (!Number.isFinite(value) || !Number.isInteger(value)) return null;
+    return value * 100;
   }, [amount]);
+
+  // Bestehenden Eintrag zur eingegebenen Website (bzw. zum Brand-Namen)
+  // finden – ein Gebot darauf erhöht den Eintrag, gezahlt wird die Differenz.
+  const existingListing = useMemo(() => {
+    const bids = spot?.bids ?? [];
+    const cleaned = url.trim() ? cleanUrl(url.trim()) : null;
+    if (!cleaned && !brand.trim()) return null;
+    const key = listingKeyFor(cleaned, brand);
+    const idx = bids.findIndex((b) => listingKeyFor(b.url, b.brand) === key);
+    if (idx < 0) return null;
+    return { bid: bids[idx], rank: idx + 1 };
+  }, [spot, url, brand]);
 
   function openForm(prefillUrl?: string) {
     if (prefillUrl) setUrl(prefillUrl);
@@ -165,8 +183,18 @@ export default function Home() {
     if (submitting) return;
     setError(null);
 
-    if (amountCents === null || amountCents < minBid) {
+    if (amountCents === null) {
+      setError("Gebote nur in ganzen Dollar – z.B. 5, nicht 4,50.");
+      return;
+    }
+    if (amountCents < minBid) {
       setError(`Dein Gebot muss mindestens ${formatUsd(minBid)} sein.`);
+      return;
+    }
+    if (existingListing && amountCents <= existingListing.bid.amountCents) {
+      setError(
+        `Dieser Eintrag steht schon bei ${formatUsd(existingListing.bid.amountCents)} – zum Erhöhen musst du mehr bieten.`
+      );
       return;
     }
     if (locationType !== "online" && !address.trim()) {
@@ -206,7 +234,15 @@ export default function Home() {
         return;
       }
       // Demo-Modus: Gebot ist sofort in der Rangliste
-      setWonRank(typeof data.rank === "number" ? data.rank : null);
+      setWon(
+        typeof data.rank === "number"
+          ? {
+              rank: data.rank,
+              raised: Boolean(data.raised),
+              paidCents: typeof data.paidCents === "number" ? data.paidCents : 0,
+            }
+          : null
+      );
       setFormOpen(false);
       amountTouched.current = false;
       setBrand("");
@@ -220,7 +256,7 @@ export default function Home() {
       setLogo("");
       window.scrollTo({ top: 0, behavior: "smooth" });
       await load();
-      setTimeout(() => setWonRank(null), 6000);
+      setTimeout(() => setWon(null), 7000);
     } catch {
       setError("Verbindung fehlgeschlagen. Versuch es nochmal.");
     } finally {
@@ -311,11 +347,21 @@ export default function Home() {
         </p>
       </section>
 
-      {wonRank !== null && (
+      {won !== null && (
         <div className="mb-4 rounded-xl border border-green-300 bg-green-50 p-4 text-center font-semibold text-green-700">
-          🎉 Dein Gebot ist drin – du bist auf{" "}
-          <span className="font-black">Platz {wonRank}</span>
-          {wonRank === 1 ? " und hast den Spot!" : "!"}
+          {won.raised ? (
+            <>
+              🎉 Eintrag erhöht ({formatUsd(won.paidCents)} Differenz gezahlt)
+              – du bist auf <span className="font-black">Platz {won.rank}</span>
+              {won.rank === 1 ? " und hast den Spot!" : "!"}
+            </>
+          ) : (
+            <>
+              🎉 Dein Gebot ist drin – du bist auf{" "}
+              <span className="font-black">Platz {won.rank}</span>
+              {won.rank === 1 ? " und hast den Spot!" : "!"}
+            </>
+          )}
         </div>
       )}
 
@@ -486,7 +532,9 @@ export default function Home() {
             <div>
               <label className={labelCls}>
                 Dein Gebot in $ *{" "}
-                <span className="opacity-60">(mind. {formatUsd(minBid)})</span>
+                <span className="opacity-60">
+                  (ganze Dollar, mind. {formatUsd(minBid)})
+                </span>
               </label>
               <input
                 value={amount}
@@ -494,18 +542,32 @@ export default function Home() {
                   amountTouched.current = true;
                   setAmount(e.target.value);
                 }}
-                inputMode="decimal"
+                inputMode="numeric"
                 required
                 className={`${inputCls} text-lg font-bold`}
               />
             </div>
           </div>
-          {ranked.length > 0 && (
-            <p className="text-xs text-stone-500">
-              {amountCents !== null && amountCents >= toBeat
-                ? "Damit landest du auf Platz 1. 🏆"
-                : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem auf die Liste.`}
+          {existingListing ? (
+            <p className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+              Diese {existingListing.bid.url ? "Website" : "Brand"} steht schon
+              mit {formatUsd(existingListing.bid.amountCents)} auf Platz{" "}
+              {existingListing.rank}. Dein Gebot <b>erhöht diesen Eintrag</b> –
+              du zahlst nur die Differenz
+              {amountCents !== null &&
+              amountCents > existingListing.bid.amountCents
+                ? ` (${formatUsd(amountCents - existingListing.bid.amountCents)})`
+                : ""}
+              . Niemand anderes kann deinen Eintrag übernehmen.
             </p>
+          ) : (
+            ranked.length > 0 && (
+              <p className="text-xs text-stone-500">
+                {amountCents !== null && amountCents >= toBeat
+                  ? "Damit landest du auf Platz 1. 🏆"
+                  : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem auf die Liste.`}
+              </p>
+            )
           )}
 
           {error && (
@@ -691,8 +753,82 @@ export default function Home() {
       )}
 
       <footer className="mt-16 text-center text-xs text-stone-400">
+        <button
+          onClick={() => setRulesOpen(true)}
+          className="font-semibold text-stone-500 underline underline-offset-2 hover:text-stone-800"
+        >
+          Regeln
+        </button>
+        <span className="mx-2">·</span>
         BrandSpot – inspiriert von outbid.lol. Wer mehr bietet, steht oben.
       </footer>
+
+      {rulesOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setRulesOpen(false)}
+        >
+          <div
+            className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-left shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-xl font-black">Regeln</h2>
+              <button
+                onClick={() => setRulesOpen(false)}
+                aria-label="Schließen"
+                className="text-stone-400 hover:text-stone-800"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-sm text-stone-600">
+              BrandSpot ist eine öffentliche Rangliste. Du zahlst, um über
+              allen anderen zu stehen. Der Rang ist das Gebot – sonst nichts.
+            </p>
+            <h3 className="mt-4 font-bold">So funktioniert die Rangliste</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
+              <li>Gebote sind ganze US-Dollar, Startpreis $1.</li>
+              <li>
+                Wer weniger als Platz 1 zahlt, landet trotzdem auf der Liste –
+                genau auf dem Platz, den das Gebot hergibt.
+              </li>
+              <li>
+                Dieselbe Website erneut eintragen erhöht diesen Eintrag – du
+                zahlst nur die Differenz zum aktuellen Gebot. Niemand anderes
+                kann deinen Eintrag übernehmen, indem er die Differenz zahlt.
+              </li>
+              <li>
+                Bei gleichem Betrag steht vorne, wer ihn zuerst erreicht hat.
+              </li>
+            </ul>
+            <h3 className="mt-4 font-bold">Was du eintragen kannst</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
+              <li>
+                Deine Brand – online (mit Website), vor Ort (mit Adresse) oder
+                beides. Mit Beschreibung, Land, Kategorie und Logo.
+              </li>
+              <li>
+                Chat- und Invite-Links sind nicht erlaubt – Telegram, WhatsApp,
+                Discord, Messenger, Signal und ähnliche. Die Liste ist für
+                Brands, nicht für Gruppenchats.
+              </li>
+              <li>
+                Query-Parameter werden aus Links entfernt – Affiliate-,
+                Referral- und Tracking-URLs funktionieren nicht.
+              </li>
+            </ul>
+            <h3 className="mt-4 font-bold">Nach der Zahlung</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-stone-600">
+              <li>
+                Dein Eintrag ist öffentlich. Klicks gehen zur eingereichten
+                URL – ohne Query-Parameter.
+              </li>
+              <li>Erst die abgeschlossene Zahlung sichert den Rang.</li>
+            </ul>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

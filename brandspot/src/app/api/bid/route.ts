@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { addPendingBid, applyBid } from "@/lib/store";
+import { addPendingBid, applyBid, findListing } from "@/lib/store";
 import { baseUrl, getStripe, stripeEnabled } from "@/lib/stripe";
+import { formatUsd } from "@/lib/types";
 import { bidSchema } from "@/lib/validate";
 
 export const dynamic = "force-dynamic";
@@ -20,15 +21,44 @@ export async function POST(request: Request) {
   }
   const bid = parsed.data;
 
-  // Demo-Modus ohne Stripe: Gebot sofort in die Rangliste aufnehmen.
+  // Demo-Modus ohne Stripe: Gebot sofort anwenden (neu oder Erhöhung).
   if (!stripeEnabled()) {
     const result = await applyBid(bid);
-    return NextResponse.json({ ok: true, demo: true, rank: result.rank });
+    if (!result.ok) {
+      return NextResponse.json(
+        {
+          error: `Dieser Eintrag steht schon bei ${formatUsd(result.currentCents)} – zum Erhöhen musst du mehr bieten.`,
+          currentCents: result.currentCents,
+        },
+        { status: 409 }
+      );
+    }
+    return NextResponse.json({
+      ok: true,
+      demo: true,
+      rank: result.rank,
+      raised: result.raised,
+      paidCents: result.paidCents,
+    });
   }
 
-  // Stripe-Modus: Gebot serverseitig parken (Logo-Uploads passen nicht in
-  // Stripe-Metadata) und Checkout-Session mit Token erstellen. Das Gebot
-  // zählt erst nach bestätigter Zahlung (Webhook).
+  // Stripe-Modus: Beim Erhöhen eines bestehenden Eintrags wird nur die
+  // Differenz berechnet. Das Gebot (der neue Gesamtbetrag) wird serverseitig
+  // geparkt und zählt erst nach bestätigter Zahlung (Webhook).
+  const existing = await findListing(bid.url, bid.brand);
+  if (existing && bid.amountCents <= existing.amountCents) {
+    return NextResponse.json(
+      {
+        error: `Dieser Eintrag steht schon bei ${formatUsd(existing.amountCents)} – zum Erhöhen musst du mehr bieten.`,
+        currentCents: existing.amountCents,
+      },
+      { status: 409 }
+    );
+  }
+  const chargeCents = existing
+    ? bid.amountCents - existing.amountCents
+    : bid.amountCents;
+
   const token = await addPendingBid(bid);
   const stripe = getStripe();
   const session = await stripe.checkout.sessions.create({
@@ -38,9 +68,11 @@ export async function POST(request: Request) {
         quantity: 1,
         price_data: {
           currency: "usd",
-          unit_amount: bid.amountCents,
+          unit_amount: chargeCents,
           product_data: {
-            name: `BrandSpot-Gebot: ${bid.brand}`,
+            name: existing
+              ? `BrandSpot-Erhöhung auf ${formatUsd(bid.amountCents)}: ${bid.brand}`
+              : `BrandSpot-Gebot: ${bid.brand}`,
             description: bid.message.slice(0, 140),
           },
         },

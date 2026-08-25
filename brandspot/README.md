@@ -2,10 +2,12 @@
 
 Ein Werbeplatz-Bietspiel im Stil von [outbid.lol](https://outbid.lol) – aber für **Brands**, mit Rangliste:
 
-- Jedes Gebot ab **$1** kommt in die Rangliste – man muss **nicht** über dem aktuellen Platz 1 liegen.
+- Gebote in **ganzen US-Dollar**, ab **$1** – man muss **nicht** über dem aktuellen Platz 1 liegen, jedes Gebot landet auf dem Platz, den es hergibt.
 - Die Brand mit dem **höchsten Gebot** bekommt den großen Spot ganz oben.
-- Bei **gleichem Betrag** gewinnt, wer **zuerst** geboten hat: Bieten 5 Brands je $10, steht die erste davon vorne, die anderen dahinter.
-- Jede Brand präsentiert sich mit Name, Botschaft (max. 140 Zeichen), Link, Logo und Farbe.
+- Bei **gleichem Betrag** gewinnt, wer ihn **zuerst** erreicht hat: Bieten 5 Brands je $10, steht die erste davon vorne, die anderen dahinter.
+- **Erhöhen statt neu bieten:** Einträge sind über ihre Website (Host + Pfad, ohne `www.` und Query-Parameter) verknüpft – ohne Website über den Brand-Namen. Dieselbe Website erneut eintragen setzt den Eintrag auf den neuen Betrag, **gezahlt wird nur die Differenz**. Niemand anderes kann einen fremden Eintrag übernehmen.
+- **Chat- und Invite-Links sind verboten** (Telegram, WhatsApp, Discord, Messenger, Signal …); Query-Parameter werden aus Links entfernt, Affiliate-/Tracking-URLs funktionieren also nicht.
+- Jede Brand präsentiert sich mit Name, Beschreibung, Kategorie, Ortstyp (online/vor Ort/beides), Adresse, Land, Website, Logo und Farbe. Die Regeln stehen auch in der App (Fußzeile → „Regeln").
 
 ## Starten
 
