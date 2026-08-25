@@ -1,9 +1,23 @@
 export type LocationType = "online" | "physical" | "both";
 
+export const CATEGORIES = [
+  "Gastro",
+  "Fashion",
+  "Tech",
+  "Shop",
+  "Beauty",
+  "Fitness",
+  "Service",
+  "Sonstiges",
+] as const;
+
+export type Category = (typeof CATEGORIES)[number];
+
 export type Bid = {
   id: string;
   brand: string;
   message: string;
+  category: Category;
   locationType: LocationType;
   address: string | null;
   country: string | null;

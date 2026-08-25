@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_BID_CENTS, START_PRICE_CENTS } from "./types";
+import { CATEGORIES, MAX_BID_CENTS, START_PRICE_CENTS } from "./types";
 
 function isHttpUrl(value: string): boolean {
   try {
@@ -33,6 +33,7 @@ export const bidSchema = z
   .object({
     brand: z.string().trim().min(1, "Brand-Name fehlt").max(40),
     message: z.string().trim().min(1, "Beschreibung fehlt").max(200),
+    category: z.enum(CATEGORIES).catch("Sonstiges"),
     locationType: z.enum(["online", "physical", "both"]),
     address: z
       .string()

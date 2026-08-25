@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  CATEGORIES,
   formatUsd,
   type Bid,
+  type Category,
   type LocationType,
   type PublicSpot,
 } from "@/lib/types";
@@ -30,7 +32,7 @@ function textOn(hex: string): string {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.6 ? "#0a0a0f" : "#ffffff";
+  return luminance > 0.6 ? "#1c1b20" : "#ffffff";
 }
 
 function timeAgo(iso: string): string {
@@ -80,6 +82,7 @@ async function fileToLogoDataUrl(file: File): Promise<string> {
 
 export default function Home() {
   const [spot, setSpot] = useState<PublicSpot | null>(null);
+  const [filter, setFilter] = useState<"Alle" | Category>("Alle");
   const [formOpen, setFormOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,15 +90,18 @@ export default function Home() {
 
   const [brand, setBrand] = useState("");
   const [message, setMessage] = useState("");
+  const [category, setCategory] = useState<Category>("Sonstiges");
   const [locationType, setLocationType] = useState<LocationType>("online");
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState("");
   const [url, setUrl] = useState("");
+  const [heroUrl, setHeroUrl] = useState("");
   const [logo, setLogo] = useState("");
   const [logoError, setLogoError] = useState<string | null>(null);
   const [color, setColor] = useState(COLORS[5]);
   const [amount, setAmount] = useState("");
   const amountTouched = useRef(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -126,6 +132,13 @@ export default function Home() {
     if (!Number.isFinite(value)) return null;
     return Math.round(value * 100);
   }, [amount]);
+
+  function openForm(prefillUrl?: string) {
+    if (prefillUrl) setUrl(prefillUrl);
+    setFormOpen(true);
+    setError(null);
+    setTimeout(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  }
 
   async function onLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     setLogoError(null);
@@ -173,6 +186,7 @@ export default function Home() {
         body: JSON.stringify({
           brand,
           message,
+          category,
           locationType,
           address,
           country,
@@ -200,7 +214,9 @@ export default function Home() {
       setAddress("");
       setCountry("");
       setUrl("");
+      setHeroUrl("");
       setLogo("");
+      window.scrollTo({ top: 0, behavior: "smooth" });
       await load();
       setTimeout(() => setWonRank(null), 6000);
     } catch {
@@ -211,151 +227,110 @@ export default function Home() {
   }
 
   const ranked = spot?.bids ?? [];
-  const top = ranked[0] ?? null;
-  const rest = ranked.slice(1);
-  const cardColor = top?.color ?? "#1f2937";
-  const cardText = textOn(cardColor);
+  const usedCategories = useMemo(() => {
+    const set = new Set<Category>();
+    ranked.forEach((b) => set.add(b.category ?? "Sonstiges"));
+    return CATEGORIES.filter((c) => set.has(c));
+  }, [ranked]);
+  const visible =
+    filter === "Alle"
+      ? ranked
+      : ranked.filter((b) => (b.category ?? "Sonstiges") === filter);
+  const top = visible[0] ?? null;
+  const rest = visible.slice(1);
   const inputCls =
-    "w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 outline-none focus:border-amber-400";
+    "w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-red-500";
+  const labelCls = "mb-1 block text-sm text-stone-500";
 
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-24">
+    <main className="mx-auto max-w-2xl px-4 pb-24">
       {/* Header */}
-      <header className="flex items-center justify-between py-6">
+      <header className="flex items-center justify-between py-5">
         <div className="text-xl font-black tracking-tight">
-          Brand<span className="text-amber-400">Spot</span>
+          Brand<span className="text-red-600">Spot</span>
         </div>
-        <div className="text-right text-sm text-zinc-400">
+        <div className="text-right text-xs text-stone-500">
           {spot && (
             <>
-              <div>
-                <span className="font-bold text-zinc-100">
-                  {formatUsd(spot.totalRaisedCents)}
-                </span>{" "}
-                insgesamt geboten
-              </div>
-              <div>
-                {ranked.length} {ranked.length === 1 ? "Gebot" : "Gebote"}
-                {spot.demoMode && (
-                  <span className="ml-2 rounded bg-amber-400/15 px-1.5 py-0.5 text-xs font-semibold text-amber-300">
-                    Demo-Modus
-                  </span>
-                )}
-              </div>
+              <span className="font-bold text-stone-900">
+                {formatUsd(spot.totalRaisedCents)}
+              </span>{" "}
+              insgesamt · {ranked.length}{" "}
+              {ranked.length === 1 ? "Gebot" : "Gebote"}
+              {spot.demoMode && (
+                <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-bold text-red-600">
+                  Demo
+                </span>
+              )}
             </>
           )}
         </div>
       </header>
 
-      {/* Intro */}
-      <p className="mb-6 text-center text-sm text-zinc-400">
-        Jedes Gebot ab{" "}
-        <span className="font-semibold text-zinc-200">$1</span> kommt in die
-        Rangliste. Wer am meisten bietet, bekommt den großen Spot – bei
-        gleichem Betrag gewinnt, wer{" "}
-        <span className="font-semibold text-zinc-200">zuerst</span> geboten hat.
-      </p>
+      {/* Hero */}
+      <section className="pb-6 pt-4 text-center">
+        <h1 className="text-4xl font-black tracking-tight sm:text-5xl">
+          Sichere dir <span className="text-red-600">Platz&nbsp;1</span>
+          <br />
+          für{" "}
+          <span className="underline decoration-red-400 decoration-4 underline-offset-4">
+            {formatUsd(toBeat)}
+          </span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-sm text-stone-500">
+          Der Startpreis liegt bei <b className="text-stone-700">$1</b>. Wer
+          weniger als Platz 1 bietet, landet trotzdem auf der Liste – genau auf
+          dem Platz, den das Gebot hergibt. Bei gleichem Betrag steht vorne,
+          wer zuerst geboten hat.
+        </p>
+
+        <form
+          className="mx-auto mt-6 flex max-w-md gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            openForm(heroUrl.trim());
+          }}
+        >
+          <input
+            value={heroUrl}
+            onChange={(e) => setHeroUrl(e.target.value)}
+            placeholder="https://deine-brand.com"
+            className="min-w-0 flex-1 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm outline-none focus:border-red-500"
+          />
+          <button
+            type="submit"
+            className="rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-red-500"
+          >
+            Mitbieten
+          </button>
+        </form>
+        <p className="mt-2 text-xs text-stone-400">
+          Website eintippen oder einfach auf „Mitbieten" – ab {formatUsd(minBid)}.
+        </p>
+      </section>
 
       {wonRank !== null && (
-        <div className="mb-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-center font-semibold text-emerald-300">
+        <div className="mb-4 rounded-xl border border-green-300 bg-green-50 p-4 text-center font-semibold text-green-700">
           🎉 Dein Gebot ist drin – du bist auf{" "}
           <span className="font-black">Platz {wonRank}</span>
           {wonRank === 1 ? " und hast den Spot!" : "!"}
         </div>
       )}
 
-      {/* Platz 1: Der Spot */}
-      <section
-        className="spot-card relative rounded-3xl p-8 text-center shadow-2xl sm:p-12"
-        style={{ backgroundColor: cardColor, color: cardText }}
-      >
-        {top ? (
-          <>
-            <div className="absolute left-4 top-4 rounded-full bg-black/20 px-3 py-1 text-sm font-black">
-              #1
-            </div>
-            <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
-              Platz 1 gehört gerade
-            </div>
-            {top.logo && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={top.logo}
-                alt={top.brand}
-                className="mx-auto mt-6 h-24 w-24 rounded-2xl bg-white/10 object-contain shadow-lg"
-              />
-            )}
-            <h1 className="mt-4 break-words text-5xl font-black tracking-tight sm:text-6xl">
-              {top.brand}
-            </h1>
-            <p className="mx-auto mt-4 max-w-md break-words text-lg opacity-90">
-              {top.message}
-            </p>
-            <div className="mt-4 text-sm font-semibold opacity-80">
-              {locationLine(top)}
-            </div>
-            {top.url && (
-              <a
-                href={top.url}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="mt-5 inline-block rounded-full px-6 py-2.5 text-sm font-bold shadow"
-                style={{ backgroundColor: cardText, color: cardColor }}
-              >
-                Zur Website →
-              </a>
-            )}
-            <div className="mt-8 text-sm opacity-70">
-              hat {formatUsd(top.amountCents)} geboten · {timeAgo(top.createdAt)}
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="text-xs font-semibold uppercase tracking-widest opacity-70">
-              Platz 1 ist noch frei
-            </div>
-            <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
-              Deine Brand hier.
-            </h1>
-            <p className="mx-auto mt-4 max-w-md text-lg opacity-90">
-              Sei die erste Brand auf dem Spot – für einen einzigen Dollar.
-            </p>
-          </>
-        )}
-      </section>
+      {/* Formular */}
+      {formOpen && (
+        <form
+          ref={formRef}
+          onSubmit={submit}
+          className="mb-8 space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"
+        >
+          <h2 className="text-center text-xl font-bold">
+            Präsentiere deine Brand
+          </h2>
 
-      {/* CTA */}
-      <div className="mt-8 text-center">
-        {!formOpen ? (
-          <>
-            <button
-              onClick={() => {
-                setFormOpen(true);
-                setError(null);
-              }}
-              className="rounded-full bg-amber-400 px-8 py-4 text-lg font-black text-zinc-950 shadow-lg transition hover:scale-105 hover:bg-amber-300"
-            >
-              Mitbieten ab {formatUsd(minBid)}
-            </button>
-            {top && (
-              <p className="mt-3 text-sm text-zinc-500">
-                Ab {formatUsd(toBeat)} bist du auf Platz 1.
-              </p>
-            )}
-          </>
-        ) : (
-          <form
-            onSubmit={submit}
-            className="mx-auto max-w-md space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 text-left"
-          >
-            <h2 className="text-center text-xl font-bold">
-              Präsentiere deine Brand
-            </h2>
-
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
-                Brand-Name *
-              </label>
+              <label className={labelCls}>Brand-Name *</label>
               <input
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
@@ -365,63 +340,74 @@ export default function Home() {
                 className={inputCls}
               />
             </div>
-
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
-                Beschreibung *{" "}
-                <span className="opacity-60">(max. 200 Zeichen)</span>
-              </label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                maxLength={200}
+              <label className={labelCls}>Kategorie</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as Category)}
+                className={inputCls}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>
+              Beschreibung * <span className="opacity-60">(max. 200 Zeichen)</span>
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              maxLength={200}
+              required
+              rows={2}
+              placeholder="Was macht deine Brand? Was soll die Welt wissen?"
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>Wo gibt es deine Brand? *</label>
+            <div className="grid grid-cols-3 gap-2">
+              {LOCATION_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setLocationType(opt.value)}
+                  className={`rounded-lg border px-2 py-2 text-sm font-semibold transition ${
+                    locationType === opt.value
+                      ? "border-red-500 bg-red-50 text-red-600"
+                      : "border-stone-300 text-stone-500 hover:text-stone-800"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {locationType !== "online" && (
+            <div>
+              <label className={labelCls}>Adresse *</label>
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                maxLength={160}
                 required
-                rows={3}
-                placeholder="Was macht deine Brand? Was soll die Welt wissen?"
+                placeholder="Straße Nr., PLZ Ort"
                 className={inputCls}
               />
             </div>
+          )}
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
-                Wo gibt es deine Brand? *
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {LOCATION_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setLocationType(opt.value)}
-                    className={`rounded-lg border px-2 py-2 text-sm font-semibold transition ${
-                      locationType === opt.value
-                        ? "border-amber-400 bg-amber-400/10 text-amber-300"
-                        : "border-zinc-700 text-zinc-400 hover:text-zinc-200"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {locationType !== "online" && (
-              <div>
-                <label className="mb-1 block text-sm text-zinc-400">
-                  Adresse *
-                </label>
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  maxLength={160}
-                  required
-                  placeholder="Straße Nr., PLZ Ort"
-                  className={inputCls}
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="mb-1 block text-sm text-zinc-400">Land</label>
+              <label className={labelCls}>Land</label>
               <input
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
@@ -430,9 +416,8 @@ export default function Home() {
                 className={inputCls}
               />
             </div>
-
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
+              <label className={labelCls}>
                 Website {locationType !== "physical" ? "*" : "(optional)"}
               </label>
               <input
@@ -444,55 +429,51 @@ export default function Home() {
                 className={inputCls}
               />
             </div>
+          </div>
 
-            <div>
-              <label className="mb-1 block text-sm text-zinc-400">
-                Logo (optional)
-              </label>
-              <div className="flex items-center gap-3">
-                {logo && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={logo}
-                    alt="Logo-Vorschau"
-                    className="h-12 w-12 rounded-lg bg-white/10 object-contain"
-                  />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={onLogoChange}
-                  className="block w-full text-sm text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-zinc-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-zinc-200 hover:file:bg-zinc-700"
+          <div>
+            <label className={labelCls}>Logo (optional)</label>
+            <div className="flex items-center gap-3">
+              {logo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={logo}
+                  alt="Logo-Vorschau"
+                  className="h-12 w-12 rounded-lg border border-stone-200 bg-white object-contain"
                 />
-                {logo && (
-                  <button
-                    type="button"
-                    onClick={() => setLogo("")}
-                    className="shrink-0 text-sm text-zinc-500 hover:text-rose-400"
-                  >
-                    Entfernen
-                  </button>
-                )}
-              </div>
-              {logoError && (
-                <p className="mt-1 text-xs text-rose-400">{logoError}</p>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={onLogoChange}
+                className="block w-full text-sm text-stone-500 file:mr-3 file:rounded-full file:border-0 file:bg-stone-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-stone-700 hover:file:bg-stone-200"
+              />
+              {logo && (
+                <button
+                  type="button"
+                  onClick={() => setLogo("")}
+                  className="shrink-0 text-sm text-stone-400 hover:text-red-600"
+                >
+                  Entfernen
+                </button>
               )}
             </div>
+            {logoError && <p className="mt-1 text-xs text-red-600">{logoError}</p>}
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
-                Spot-Farbe
-              </label>
-              <div className="flex gap-2">
+              <label className={labelCls}>Spot-Farbe</label>
+              <div className="flex gap-2 pt-1">
                 {COLORS.map((c) => (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setColor(c)}
                     aria-label={`Farbe ${c}`}
-                    className={`h-8 w-8 rounded-full transition ${
+                    className={`h-7 w-7 rounded-full transition ${
                       color === c
-                        ? "ring-2 ring-amber-400 ring-offset-2 ring-offset-zinc-900"
+                        ? "ring-2 ring-red-500 ring-offset-2"
                         : "opacity-70 hover:opacity-100"
                     }`}
                     style={{ backgroundColor: c }}
@@ -500,9 +481,8 @@ export default function Home() {
                 ))}
               </div>
             </div>
-
             <div>
-              <label className="mb-1 block text-sm text-zinc-400">
+              <label className={labelCls}>
                 Dein Gebot in $ *{" "}
                 <span className="opacity-60">(mind. {formatUsd(minBid)})</span>
               </label>
@@ -516,129 +496,199 @@ export default function Home() {
                 required
                 className={`${inputCls} text-lg font-bold`}
               />
-              {top && (
-                <p className="mt-1 text-xs text-zinc-500">
-                  {amountCents !== null && amountCents >= toBeat
-                    ? "Damit landest du auf Platz 1. 🏆"
-                    : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem in die Rangliste.`}
-                </p>
-              )}
             </div>
+          </div>
+          {ranked.length > 0 && (
+            <p className="text-xs text-stone-500">
+              {amountCents !== null && amountCents >= toBeat
+                ? "Damit landest du auf Platz 1. 🏆"
+                : `Für Platz 1 brauchst du mindestens ${formatUsd(toBeat)} – jedes Gebot ab ${formatUsd(minBid)} kommt trotzdem auf die Liste.`}
+            </p>
+          )}
 
-            {error && (
-              <div className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-300">
-                {error}
-              </div>
-            )}
-
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 rounded-full bg-amber-400 px-6 py-3 font-black text-zinc-950 transition hover:bg-amber-300 disabled:opacity-50"
-              >
-                {submitting
-                  ? "Einen Moment…"
-                  : spot?.demoMode
-                    ? "Gebot abgeben (Demo)"
-                    : "Weiter zur Zahlung"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormOpen(false)}
-                className="rounded-full border border-zinc-700 px-5 py-3 text-sm text-zinc-400 hover:text-zinc-200"
-              >
-                Abbrechen
-              </button>
+          {error && (
+            <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
+              {error}
             </div>
+          )}
 
-            {spot?.demoMode && (
-              <p className="text-center text-xs text-zinc-500">
-                Demo-Modus: keine echte Zahlung. Mit Stripe-Keys wird hier ein
-                echter Checkout gestartet.
-              </p>
-            )}
-          </form>
-        )}
-      </div>
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 rounded-full bg-red-600 px-6 py-3 font-bold text-white transition hover:bg-red-500 disabled:opacity-50"
+            >
+              {submitting
+                ? "Einen Moment…"
+                : spot?.demoMode
+                  ? "Gebot abgeben (Demo)"
+                  : "Weiter zur Zahlung"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormOpen(false)}
+              className="rounded-full border border-stone-300 px-5 py-3 text-sm text-stone-500 hover:text-stone-800"
+            >
+              Abbrechen
+            </button>
+          </div>
 
-      {/* Rangliste ab Platz 2 */}
-      {rest.length > 0 && (
-        <section className="mt-16">
-          <h2 className="mb-4 text-center text-lg font-bold text-zinc-300">
-            Die Rangliste
-          </h2>
-          <ul className="space-y-2">
-            {rest.map((b: Bid, i: number) => (
-              <li
-                key={b.id}
-                className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="w-8 shrink-0 text-right font-black text-zinc-500">
-                    #{i + 2}
-                  </span>
-                  {b.logo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={b.logo}
-                      alt=""
-                      className="h-8 w-8 shrink-0 rounded-lg bg-white/10 object-contain"
-                    />
-                  ) : (
-                    <span
-                      className="h-3 w-3 shrink-0 rounded-full"
-                      style={{ backgroundColor: b.color }}
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      {b.url ? (
-                        <a
-                          href={b.url}
-                          target="_blank"
-                          rel="noopener noreferrer nofollow"
-                          className="truncate font-semibold hover:text-amber-300"
-                        >
-                          {b.brand}
-                        </a>
-                      ) : (
-                        <span className="truncate font-semibold">{b.brand}</span>
-                      )}
-                    </div>
-                    <div className="truncate text-xs text-zinc-500">
-                      {locationLine(b) || b.message}
-                    </div>
-                  </div>
-                </div>
-                <div className="ml-3 shrink-0 text-right text-sm">
-                  <div className="font-bold">{formatUsd(b.amountCents)}</div>
-                  <div className="text-xs text-zinc-500">{timeAgo(b.createdAt)}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+          {spot?.demoMode && (
+            <p className="text-center text-xs text-stone-400">
+              Demo-Modus: keine echte Zahlung. Mit Stripe-Keys wird hier ein
+              echter Checkout gestartet.
+            </p>
+          )}
+        </form>
       )}
 
-      {/* So funktioniert's */}
-      <section className="mt-16 grid gap-4 text-center sm:grid-cols-3">
-        {[
-          ["1", "Biete ab $1", "Jedes Gebot kommt in die Rangliste – egal wie hoch."],
-          ["2", "Mehr = weiter oben", "Der höchste Betrag bekommt den großen Spot ganz oben."],
-          ["3", "Schnell sein lohnt sich", "Bei gleichem Betrag steht vorne, wer zuerst geboten hat."],
-        ].map(([n, title, text]) => (
-          <div key={n} className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5">
-            <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 font-black text-zinc-950">
-              {n}
-            </div>
-            <div className="font-bold">{title}</div>
-            <div className="mt-1 text-sm text-zinc-400">{text}</div>
-          </div>
-        ))}
-      </section>
+      {/* Kategorie-Filter */}
+      {ranked.length > 0 && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {(["Alle", ...usedCategories] as const).map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilter(c as "Alle" | Category)}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                filter === c
+                  ? "bg-stone-900 text-white"
+                  : "border border-stone-300 bg-white text-stone-500 hover:text-stone-900"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )}
 
-      <footer className="mt-20 text-center text-xs text-zinc-600">
+      {/* Platz 1 */}
+      {top && (
+        <div
+          className="mb-3 rounded-2xl p-6 shadow-md"
+          style={{ backgroundColor: top.color, color: textOn(top.color) }}
+        >
+          <div className="flex items-start gap-4">
+            <div className="rounded-full bg-black/20 px-2.5 py-1 text-sm font-black">
+              #1
+            </div>
+            {top.logo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={top.logo}
+                alt={top.brand}
+                className="h-14 w-14 shrink-0 rounded-xl bg-white/20 object-contain"
+              />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-3">
+                <span className="break-words text-2xl font-black">
+                  {top.brand}
+                </span>
+                <span className="text-sm font-bold opacity-80">
+                  {formatUsd(top.amountCents)}
+                </span>
+              </div>
+              <p className="mt-1 break-words text-sm opacity-90">{top.message}</p>
+              <div className="mt-2 text-xs font-semibold opacity-80">
+                {locationLine(top)}
+                {top.category ? ` · ${top.category}` : ""} · {timeAgo(top.createdAt)}
+              </div>
+            </div>
+            {top.url && (
+              <a
+                href={top.url}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="shrink-0 rounded-full px-4 py-2 text-xs font-bold shadow"
+                style={{ backgroundColor: textOn(top.color), color: top.color }}
+              >
+                Besuchen →
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Liste ab Platz 2 */}
+      {rest.length > 0 && (
+        <ul className="space-y-2">
+          {rest.map((b: Bid, i: number) => (
+            <li
+              key={b.id}
+              className="flex items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="w-8 shrink-0 text-right text-sm font-black text-stone-400">
+                  #{i + 2}
+                </span>
+                {b.logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={b.logo}
+                    alt=""
+                    className="h-9 w-9 shrink-0 rounded-lg border border-stone-200 bg-white object-contain"
+                  />
+                ) : (
+                  <span
+                    className="h-3 w-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: b.color }}
+                  />
+                )}
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    {b.url ? (
+                      <a
+                        href={b.url}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="truncate font-bold hover:text-red-600"
+                      >
+                        {b.brand}
+                      </a>
+                    ) : (
+                      <span className="truncate font-bold">{b.brand}</span>
+                    )}
+                    <span className="hidden truncate text-xs text-stone-500 sm:inline">
+                      {b.message}
+                    </span>
+                  </div>
+                  <div className="truncate text-xs text-stone-400">
+                    {locationLine(b)}
+                    {b.category ? ` · ${b.category}` : ""}
+                  </div>
+                </div>
+              </div>
+              <div className="shrink-0 text-right">
+                <div className="text-sm font-bold">{formatUsd(b.amountCents)}</div>
+                <div className="text-xs text-stone-400">{timeAgo(b.createdAt)}</div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {ranked.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-10 text-center">
+          <div className="text-2xl font-black">Platz 1 ist noch frei.</div>
+          <p className="mt-2 text-sm text-stone-500">
+            Sei die erste Brand auf der Liste – für einen einzigen Dollar.
+          </p>
+          <button
+            onClick={() => openForm()}
+            className="mt-5 rounded-full bg-red-600 px-6 py-3 text-sm font-bold text-white transition hover:bg-red-500"
+          >
+            Jetzt Platz 1 sichern
+          </button>
+        </div>
+      )}
+
+      {visible.length === 0 && ranked.length > 0 && (
+        <p className="py-8 text-center text-sm text-stone-400">
+          In dieser Kategorie gibt es noch keine Gebote.
+        </p>
+      )}
+
+      <footer className="mt-16 text-center text-xs text-stone-400">
         BrandSpot – inspiriert von outbid.lol. Wer mehr bietet, steht oben.
       </footer>
     </main>
