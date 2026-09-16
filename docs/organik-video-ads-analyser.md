@@ -321,6 +321,33 @@ Pacing: slow, almost whispered but fully intelligible; the second line a
 touch warmer and more inviting than the first.
 ```
 
+**Clip D — Slogan im Raum (ersetzt die flache Endcard):**
+
+Der Slogan steht als **physische 3D-Buchstaben in der Halle** neben/hinter ihr — wie Showroom-Lettern auf dem Beton. Zwei Wege:
+
+*Weg A — im Modell generieren (zuerst versuchen, exakte Schreibweise ist Glückssache — max. 2 Versuche):*
+
+```
+Clip D (4s): Same warehouse, wider front-on shot: the woman stands relaxed
+at the right side of the frame, arms crossed, deadpan, leaning slightly
+against the desk. To her left, standing ON the concrete floor behind her,
+large free-standing matte-white 3D block letters about waist-high, arranged
+in two lines like showroom letters:
+top line exactly: DON'T BURN MONEY.
+bottom line exactly: MAKE MONEY.
+The letters are physical objects in the room: they cast soft natural
+shadows on the concrete, catch the cool daylight from the windows, and the
+woman partially overlaps the last letters so they are clearly BEHIND her.
+Slow subtle camera push-in with natural handheld micro-shake, creating
+gentle parallax between her, the letters and the shelving background.
+No other text anywhere. Same realism and AVOID rules as above.
+Audio: quiet warehouse room tone (voiceover added in editing).
+```
+
+*Weg B — Fallback im Schnitt (wenn die Buchstaben vermurkst sind):* Clip D ohne Letters generieren (sie steht rechts, links Freiraum), dann in CapCut „Text → 3D-Stil + Tracking" (oder After Effects Kamera-Tracking): Text im Raum verankern, Perspektive an die Bodenflucht anpassen, Schlagschatten unter die Buchstaben, 2–3 % Bewegungsunschärfe, damit er das Kamera-Wackeln mitmacht. Entscheidend für den „steht wirklich da"-Effekt: Der Text muss dem Mikro-Wackeln der Kamera folgen — statischer Text auf wackelndem Bild ist der Verräter.
+
+In beiden Wegen: Voiceover (sexy junge Frauenstimme, Spec oben) exakt auf das Erscheinen der Buchstaben getimed — „Don't burn money." wenn die obere Zeile im Fokus ist, Beat, „Make money." zur unteren. Danach 1 s Standzeit mit „adproved.io" klein darunter (im Schnitt) + „Kommentier ADPROVED".
+
 **Realismus-Checkliste nach der Generierung (vor dem Schnitt prüfen):** Hände/Finger in Clip B beim Öffnen der Hand · Feuer wirft flackerndes Licht auf Gesicht UND Blazer (einseitiges Leuchten = CGI-Verräter) · Schatten der Frau auf dem Boden vorhanden und konsistent · Scheine im Bündel bewegen sich beim Fallen · keine „schwebenden" Rauchfahnen ohne Quelle. Fällt einer der Punkte durch → nur den betroffenen Clip neu generieren.
 
 *(v2-Prompt unten bleibt als Alternative ohne Schubkarre.)*
