@@ -233,7 +233,95 @@ the closing voiceover "Don't burn money. Make money." are added in editing).
 No music, no speech, no on-screen text, no logos, no watermark.
 ```
 
-**Schnitt danach:** Kaching ×4–5 über Clip C (generischer Kassenklang), dann Endcard „DON'T BURN MONEY. MAKE MONEY." + adproved.io + „Kommentier ADPROVED", optional tiefe Männerstimme spricht den Slogan. KI-Label in der Reel-Beschreibung setzen.
+**Schnitt danach:** Kaching ×4–5 über Clip C (generischer Kassenklang), dann Endcard „DON'T BURN MONEY. MAKE MONEY." + adproved.io + „Kommentier ADPROVED". KI-Label in der Reel-Beschreibung setzen.
+
+#### Konzept D — v5 FINAL (Ultra-Realismus-Prompt + weibliches Voiceover, ersetzt v4-Prompt)
+
+*Ziel: Darf nicht nach KI aussehen. Prinzip: KI-Videos verraten sich durch Perfektion — der Prompt schreibt deshalb Unperfektheit explizit vor (Hautporen, zerknitterte Scheine, Staub, Auto-Belichtungs-Schwankungen) und verbietet die typischen KI-Merkmale in einer AVOID-Liste.*
+
+**Seedance-Prompt v5:**
+
+```
+Vertical 9:16, 24fps, raw smartphone footage shot on an iPhone rear camera,
+26mm equivalent lens, f/1.8, everything mostly in focus like a phone clip -
+NOT cinematic shallow depth of field. Natural handheld micro-shake from
+being held in two hands, tiny framing corrections, auto-exposure that shifts
+subtly when brightness changes, slight sensor noise in the shadows, natural
+motion blur on fast movement, neutral iPhone HDR colors, no color grading,
+no film grain overlay, no vignette.
+
+LOCATION (all clips): a real working warehouse: scuffed grey concrete floor
+with faint forklift tire marks and dust, steel shelving racks with
+mixed-size brown cardboard boxes (some open, flaps up, packing tape
+hanging), a pallet stack and a parked pallet jack far in the background,
+uneven mixed lighting - cool daylight shafts from high dirty windows with
+visible dust motes, plus a few neutral ceiling LED panels.
+
+THE WOMAN (all clips - keep identical): around 27, attractive in a natural
+real-person way, NOT model-perfect: realistic skin with visible pores and
+faint under-eye shadows, minimal makeup, a slightly asymmetric face, natural
+eyebrows, dark blonde hair in a low ponytail with a few flyaway strands, a
+slightly wrinkled charcoal blazer over a plain white t-shirt, jeans, small
+creases at the blazer elbows. She blinks naturally, breathes visibly, makes
+tiny involuntary head movements. She never speaks and never smiles -
+deadpan, calm, confident.
+
+THE MONEY (all clips): used circulated US dollar bills, slightly crumpled
+and worn at the edges, strapped into uneven bundles with currency straps,
+stacked imperfectly, a few loose bills sticking out.
+
+STRICT RULES: her face stays clearly visible whenever she is in frame;
+nothing ever passes in front of the lens; all fire stays small and contained
+(hand flame only at the bundle corner, wheelbarrow fire only on top of the
+pile), no gasoline, no explosion, no flames outside the wheelbarrow; the
+laptop screen is NEVER visible to the camera.
+
+AVOID (hard): plastic or airbrushed skin, beauty-filter smoothing, perfectly
+symmetrical face, over-white teeth, glossy oversaturated colors, cinematic
+depth of field, slow motion, dramatic camera moves, lens flares,
+CGI-looking fire, floating or morphing objects, extra fingers, readable
+text, logos, watermarks.
+
+Clip A (4s): She pushes a worn metal wheelbarrow HEAPED FULL of the dollar
+bundles just TWO steps toward the static camera - the wheel squeaks and
+wobbles slightly under the weight - then sets the wheelbarrow down on its
+legs with a small metallic clunk, straightens up behind it, and looks
+directly into the lens, deadpan, hands resting on the handles.
+
+Clip B (4s): Same camera position, hard continuity with Clip A: standing
+behind the parked wheelbarrow she holds up ONE bundle of dollar bills in
+her right hand at shoulder height, a small realistic flame eating at its
+corner - soft orange core, thin wisp of grey smoke, a few tiny drifting
+embers, faint heat shimmer, the flame reflecting in her eyes. She looks
+into the camera completely deadpan, then opens her fingers and lets the
+burning bundle drop onto the money pile. Flames spread slowly and
+realistically across the top of the pile inside the wheelbarrow, warm light
+flickering on her face and blazer. She does not flinch.
+
+Clip C (5s): Hard cut, another corner of the same warehouse: front-on medium
+close-up, she sits at a plain desk, an open laptop directly in front of her
+with ONLY THE BACK OF THE LID facing the camera - the screen is never
+visible, but its cool glow subtly lights her face from below. She leans
+back slightly, relaxed, deadpan-satisfied, eyes moving a little as if
+following numbers on the hidden screen, then gives one slow nod. Loopable.
+
+Audio: A - big-room warehouse tone, wheel squeak, two footsteps, metal legs
+clunk; B - soft realistic fire crackle that grows slightly as the bundle
+lands; C - quiet room tone only. No music, no speech, no text.
+```
+
+**Voiceover (im Schnitt über die Endcard, per TTS z. B. ElevenLabs/Audio-Tool generieren):**
+
+```
+Voice: female, early-to-mid 20s, low and breathy, sultry and confident, a
+hint of a smile in the tone, close-mic intimate recording, slight vocal fry
+on line ends, unhurried.
+Delivery: "Don't burn money." [beat, half a second] "Make money."
+Pacing: slow, almost whispered but fully intelligible; the second line a
+touch warmer and more inviting than the first.
+```
+
+**Realismus-Checkliste nach der Generierung (vor dem Schnitt prüfen):** Hände/Finger in Clip B beim Öffnen der Hand · Feuer wirft flackerndes Licht auf Gesicht UND Blazer (einseitiges Leuchten = CGI-Verräter) · Schatten der Frau auf dem Boden vorhanden und konsistent · Scheine im Bündel bewegen sich beim Fallen · keine „schwebenden" Rauchfahnen ohne Quelle. Fällt einer der Punkte durch → nur den betroffenen Clip neu generieren.
 
 *(v2-Prompt unten bleibt als Alternative ohne Schubkarre.)*
 
