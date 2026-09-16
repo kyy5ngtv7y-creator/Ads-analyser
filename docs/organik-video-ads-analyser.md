@@ -128,6 +128,64 @@ B - one keyboard click; C - quiet room tone only (cash-register sounds are
 added in editing). No music, no speech, no text, no logos, no watermark.
 ```
 
+#### Konzept D — v3 FINAL (Schubkarren-Version, Regie: Gründer)
+
+*Schnittfolge: Schubkarre voller Dollar-Bündel → sie wirft Feuer hinein, Flammen schlagen hoch → Laptop + Kaching-Regen → Slogan-Card. Wortlos. Die Schubkarre ist der Scroll-Stopper (Absurdität + Geld), das Feuer der Schock, der Laptop-Kaching der Flip, die Card die Auflösung mit Ads-Kontext.*
+
+**Beat-Plan (14–16 s):**
+
+| Beat | Zeit | Bild | Schnitt-Overlays/Sound |
+|---|---|---|---|
+| A | 0–3 s | Frau schiebt eine Schubkarre **randvoll mit Dollar-Bündeln** in eine Lagerhalle Richtung Kamera, stoppt | Raumton, Schubkarren-Quietschen |
+| B | 3–6 s | Schnitt: Sie hält eine brennende Fackel, wirft sie in die Schubkarre — Flammen schlagen **in der Karre** hoch, sie schaut deadpan in die Kamera | Feuer-Whoosh + Knistern |
+| C | 6–11 s | Schnitt: Sie am Laptop, entspannt — Bestell-Popups regnen als Overlays, sie lehnt sich zurück | „Kaching" ×5 (generischer Kassenklang) |
+| D | 11–16 s | Endcard: gross **„DON'T BURN MONEY. MAKE MONEY."**, darunter „Test your ad first → Adproved.io" | CTA: „Kommentier ADPROVED" |
+
+Der Ads-Kontext kommt in Beat C+D: Laptop-Szene bekommt im Schnitt ein kleines „Ad approved ✅ 84 %"-Overlay, und die Endcard sagt explizit „Test your ad first" — erst Schock, dann Verstehen. Genau die Reihenfolge des Oktopus-Videos.
+
+**Seedance-Prompt v3 (drei Clips; vorher 1 Charakter-Referenzbild der Frau generieren und in allen Clips referenzieren):**
+
+```
+Vertical 9:16, 24fps, photorealistic amateur iPhone footage, natural handheld
+micro-shake, true-to-life colors, big modern warehouse interior with shelving
+racks and cardboard boxes in the background, cool daylight from high windows,
+concrete floor.
+
+STRICT RULES for all clips: the woman's face stays clearly visible whenever
+she is in frame; nothing ever passes in front of the camera lens; the
+banknotes are green dollar-style PROP bills in strapped bundles, clearly
+fictional, not real US currency; all fire stays inside the metal wheelbarrow
+only - no gasoline, no explosion, no flames outside the wheelbarrow, no smoke
+filling the hall; the woman never speaks and never smiles.
+
+Clip A (3s): A confident attractive woman around 30, business-casual blazer
+and jeans, pushes a metal wheelbarrow HEAPED FULL with strapped bundles of
+green prop banknotes across the warehouse floor straight toward the static
+camera. She stops at medium distance behind the wheelbarrow and looks
+directly into the lens, deadpan.
+
+Clip B (3s): Same position, same framing, hard continuity with Clip A: she
+now holds a small burning torch in her right hand, looks into the camera
+completely deadpan, and tosses the torch onto the money in the wheelbarrow.
+Flames whoosh up from inside the wheelbarrow, contained to the wheelbarrow,
+lighting her face warmly. She does not flinch and keeps looking into the
+lens.
+
+Clip C (5s): Hard cut, different corner of the same warehouse: she sits
+relaxed at a desk with a laptop, leaning back in the chair with hands behind
+her head, a calm satisfied deadpan face, the laptop screen showing only a
+soft blue glow with a blurred interface, no readable text. Behind her on the
+desk, neat stacked bundles of the same green prop banknotes. She gives one
+slow nod into the camera. Loopable ending.
+
+Audio per clip: A - warehouse room tone, wheelbarrow wheel squeak, footsteps;
+B - one soft torch whoosh, fire crackle, no explosion sound; C - quiet room
+tone only (cash-register sounds added in editing). No music, no speech, no
+text, no logos, no watermark.
+```
+
+*(v2-Prompt unten bleibt als Alternative ohne Schubkarre.)*
+
 **Alter Prompt (v1, mit Sprech-Konzept) für die beiden Live-Action-Teile:**
 
 ```
