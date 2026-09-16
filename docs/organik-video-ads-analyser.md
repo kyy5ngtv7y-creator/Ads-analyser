@@ -184,6 +184,57 @@ tone only (cash-register sounds added in editing). No music, no speech, no
 text, no logos, no watermark.
 ```
 
+#### Konzept D — v4 FINAL (Regie-Stand des Gründers, ersetzt v3)
+
+Änderungen gegenüber v3: (1) Nur 1–2 Schritte mit der Schubkarre, dann setzt sie sie ab. (2) Zündquelle = **brennendes Dollar-Bündel in ihrer Hand**, das sie auf die Karre fallen lässt (keine Fackel, kein Feuerzeug). (3) Laptop-Szene **frontal auf sie**, nur die Rückseite des Laptop-Deckels sichtbar, Bildschirm nie im Bild — nur Kaching-Sounds. (4) Dollars unmarkiert im Bild; KI-Kennzeichnung in der Reel-Beschreibung, nicht im Video. (5) Endcard „DON'T BURN MONEY. MAKE MONEY." + adproved.io, optional mit Männerstimme als Voiceover (im Schnitt einsprechen/generieren — nicht im Videomodell).
+
+**Seedance-Prompt v4 (drei Clips, Charakter-Referenzbild der Frau in allen Clips mitgeben):**
+
+```
+Vertical 9:16, 24fps, photorealistic amateur iPhone footage, natural handheld
+micro-shake, true-to-life colors, big modern warehouse interior with shelving
+racks and cardboard boxes in the background, cool daylight from high windows,
+concrete floor.
+
+STRICT RULES for all clips: the woman's face stays clearly visible whenever
+she is in frame; nothing ever passes in front of the camera lens; all fire
+stays small and contained - the flame in her hand only licks from the bundle
+she holds, and in the wheelbarrow the fire burns only on top of the money
+pile, no gasoline, no explosion, no flames outside the wheelbarrow, no smoke
+filling the hall; the woman never speaks and never smiles; the laptop screen
+is NEVER visible to the camera.
+
+Clip A (4s): A confident attractive woman around 30, business-casual blazer
+and jeans, pushes a metal wheelbarrow HEAPED FULL with strapped bundles of
+US dollar bills just TWO steps toward the static camera, then sets the
+wheelbarrow down on its legs, straightens up behind it and looks directly
+into the lens, deadpan, hands still on the handles.
+
+Clip B (4s): Same camera position, same framing, hard continuity with Clip A:
+she stands behind the parked wheelbarrow and holds up ONE burning bundle of
+dollar bills in her right hand at shoulder height, a small steady flame
+licking from its corner. She looks into the camera completely deadpan, then
+opens her hand and lets the burning bundle drop onto the money pile in the
+wheelbarrow. Flames spread gently across the top of the pile inside the
+wheelbarrow, lighting her face warmly. She does not flinch and keeps looking
+into the lens.
+
+Clip C (5s): Hard cut, different corner of the same warehouse: front-on
+medium close-up of the woman sitting at a desk, an open laptop directly in
+front of her with ONLY THE BACK OF THE LAPTOP LID facing the camera - the
+screen itself is never visible. She sits relaxed, leaning back slightly,
+calm satisfied deadpan face lit softly by the hidden screen's glow, eyes on
+the laptop. She gives one slow satisfied nod. Loopable ending.
+
+Audio per clip: A - warehouse room tone, wheelbarrow wheel squeak, two
+footsteps, metal legs settling; B - soft fire crackle growing slightly as
+the bundle drops; C - quiet room tone only (cash-register kaching sounds and
+the closing voiceover "Don't burn money. Make money." are added in editing).
+No music, no speech, no on-screen text, no logos, no watermark.
+```
+
+**Schnitt danach:** Kaching ×4–5 über Clip C (generischer Kassenklang), dann Endcard „DON'T BURN MONEY. MAKE MONEY." + adproved.io + „Kommentier ADPROVED", optional tiefe Männerstimme spricht den Slogan. KI-Label in der Reel-Beschreibung setzen.
+
 *(v2-Prompt unten bleibt als Alternative ohne Schubkarre.)*
 
 **Alter Prompt (v1, mit Sprech-Konzept) für die beiden Live-Action-Teile:**
