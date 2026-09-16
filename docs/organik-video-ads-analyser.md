@@ -73,7 +73,62 @@ Jedes virale Tool-Video hat **vier** Teile, nicht einen. Der Hook holt die Aufme
 - **Filmgeld statt echtem Geld, fiktive Scheine statt CHF/EUR:** Echte Banknoten zu verbrennen ist je nach Land strafbar bzw. heikel, und realistische Banknoten in Video-Generatoren triggern Falschgeld-Filter. „Generic fictional prop banknotes" lösen beides.
 - Die Frau spricht nicht ins Feuer hinein — der Deadpan-Blick IST der Witz (gleiches Prinzip wie das ausdruckslose Baby-Oktopus-Gesicht: Absurdität + Ruhe).
 
-**Seedance-Prompt für die beiden Live-Action-Teile (Shots 1+4, Screen-Teil kommt aus der echten App):**
+#### Konzept D — finale Version (v2, komplett wortlos)
+
+*Regel aus den 54-Mio.-Teardowns: kein gesprochenes Wort. Nur Bild + Sound-Design erzählen: Geld verbrennen (Ads ohne Test) → Tool-Check → Kaching-Regen (Ads mit Test). Der Ads-Kontext kommt visuell über einen roten Ads-Dashboard-Monitor im Hintergrund der Brennszene.*
+
+**Beat-Plan (18 s, alle Texte/Sounds im Schnitt, nicht im Modell):**
+
+| Beat | Zeit | Bild | Overlay/Sound (CapCut) |
+|---|---|---|---|
+| 1 | 0–4 s | Frau steht neben grossem Monitor (rotes Ads-Dashboard), verbrennt Dollar-Bündel, Deadpan-Blick | Overlay auf Monitor: „Spend: $4,000 — Sales: 0". Text oben: „Ads ohne Test:" · Sound: Feuer-Knistern |
+| 2 | 4–8 s | Sie dreht sich zum Laptop, ein Klick → **hartes Vollbild: echtes Adproved-Screen-Recording**, Score zählt hoch → grün „84 % Winner" | UI-Klick-Sound, Score-Tick |
+| 3 | 8–14 s | Zurück zu ihr am Schreibtisch: Bestell-Popups regnen als Overlays ins Bild, sie fächert ein dickes intaktes Bündel, minimales zufriedenes Nicken | „Kaching"-Kassensound ×5 (generischer Kassenklang, NICHT der originale Shopify-Ton — der gehört Shopify) |
+| 4 | 14–18 s | Endcard: Logo + Slogan, Endframe = sie mit Bündel (≈ Startframe → Loop) | Slogan: **„Don't burn it. Earn it."** · CTA: „Kommentier ADPROVED" |
+
+**Slogan-Kandidaten (einer, gross, Endcard):** „Don't burn it. Earn it." (Reim, 4 Wörter — Favorit) · „Make money. Don't burn it." · „Test first. Ka-ching later." · „Stop burning. Start earning."
+
+**Produktions-Hinweise v2:** Dollar-Optik ja, aber als „green dollar-style prop banknotes, clearly fictional" prompten — echte USD triggern Falschgeld-Filter der Modelle, und die Verbrennung echter Dollars ist in den USA strafbar (fürs Image relevant, auch wenn KI-generiert). Monitor-/Laptop-Inhalte NIE vom Modell generieren lassen (KI-Text auf Screens ist unlesbar) — Monitor zeigt im Prompt nur „blurred red declining chart", die exakten Zahlen kommen als Overlay im Schnitt. Kaching-Sequenz: die Popups sind Schnitt-Overlays, nicht generiert.
+
+**Seedance-Prompt v2 (drei Clips, wortlos):**
+
+```
+Vertical 9:16, 24fps, photorealistic amateur iPhone footage, natural handheld
+micro-shake, true-to-life colors, modern e-commerce startup office: desk with
+laptop, shelves with shipping boxes in background, one large wall monitor.
+
+STRICT RULES for all clips: the woman's face stays clearly visible in every
+frame; nothing ever passes in front of the camera lens; fire stays small and
+contained at the bundle corner only, no gasoline, no smoke filling the room;
+banknotes are green dollar-style PROP bills with a generic abstract portrait,
+clearly fictional, not real US currency; all screens show only a blurred red
+declining chart with no readable text; the woman never speaks.
+
+Clip A (4s): The woman, around 30, business-casual, stands beside the wall
+monitor (blurred red declining chart on it) facing the static camera at
+medium distance. She holds a thick bundle of green prop banknotes chest-high,
+flicks a small silver lighter and lights the bundle's corner. A small
+contained flame. She looks straight into the lens, completely deadpan,
+unbothered, no reaction, while the corner burns.
+
+Clip B (3s): Same office, over-the-shoulder medium shot: she sits down at the
+desk, drops the charred bundle beside the laptop, and decisively presses one
+key on the laptop. The laptop screen shows only a soft blue glow with a
+blurred interface, no readable text. Her face visible in three-quarter
+profile, focused.
+
+Clip C (5s): Same desk, camera front-on at medium close-up: she leans back
+relaxed in the chair, holds up a thick fresh intact bundle of the green prop
+banknotes next to her face and fans it once like a deck of cards, then gives
+one slow satisfied nod into the camera. On the desk, neat stacks of the same
+prop banknotes. Calm confident deadpan, loopable ending.
+
+Audio per clip: A - quiet room tone, one lighter flick, soft paper crackle;
+B - one keyboard click; C - quiet room tone only (cash-register sounds are
+added in editing). No music, no speech, no text, no logos, no watermark.
+```
+
+**Alter Prompt (v1, mit Sprech-Konzept) für die beiden Live-Action-Teile:**
 
 ```
 Vertical 9:16, 10 seconds, 24fps, photorealistic amateur iPhone footage,
