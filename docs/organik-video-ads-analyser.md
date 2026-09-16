@@ -52,9 +52,58 @@ Jedes virale Tool-Video hat **vier** Teile, nicht einen. Der Hook holt die Aufme
 
 **Mechanik:** Video 1: „Schick mir deine Ad in die Kommentare — ich jage sie durchs Tool und sage dir, ob sie ein Winner ist. Kostenlos. Die brutale Wahrheit." → Jede eingesendete Ad = ein Reply-Video im Format von Konzept B. Selbstfütternde Content-Maschine + jeder Einsender ist ein warmer Trial-Lead.
 
----
+### Konzept D — „Geld verbrennen" (Metapher-Hook, Adproved.io-Launch-Video)
 
-## 3. Produktions-Regeln (aus den Teardowns übertragen)
+*Physischer Schock-Hook: Eine Frau verbrennt seelenruhig ein Geldbündel. Die Metapher erklärt das Produkt ohne ein Wort. Ideal als Marken-Launchvideo und als wiederverwendbarer Hook vor jedem Format A/B.*
+
+**Skript (30 s):**
+
+| Zeit | Bild | Text-Overlay / gesprochen |
+|---|---|---|
+| 0–3 s | Frau im Business-Casual läuft ruhig durch ein modernes Büro direkt auf die Kamera zu, dickes Geldbündel in der Hand. Sie bleibt stehen, zückt ein Feuerzeug, hält die Flamme ans Bündel | „Das machst du. Jeden Monat." |
+| 3–7 s | Nahaufnahme: Scheine brennen, sie schaut ausdruckslos in die Kamera, null Reaktion | „Jede Ad, die du ungetestet schaltest, ist genau das." |
+| 7–20 s | Harter Cut: Screen-Recording Adproved.io — dieselbe „Ad" läuft durch, Score zählt hoch, stoppt rot bei 31 %, Flags erscheinen: „Kein Hook in Sek. 1" · „CTA fehlt" · „Policy-Risiko" | „60 Sekunden vorher — und du weisst, ob deine Ad ein Winner ist oder dein Geld verbrennt." |
+| 20–26 s | Cut zurück: dieselbe Frau, gleiche Einstellung — jetzt hält sie das intakte Bündel hoch, Feuerzeug fällt in den Papierkorb. Grüner Score „84 % — Winner" als Overlay | „Testen. Dann schalten." |
+| 26–30 s | Logo Adproved.io + Score-Screen | „Kommentier **ADPROVED** — ich schick dir 3 Gratis-Analysen." |
+
+**Loop:** Endframe (sie hält das Bündel) ≈ Startframe (sie kommt mit Bündel) → nahtloser Wiedereinstieg.
+
+**Pflicht-Hinweise zur Umsetzung:**
+- **Kein Benzin.** Echtes Benzin-Anzünden ist gefährlich UND fällt bei Meta/TikTok unter „gefährliche Handlungen" → Reichweiten-Drossel oder Takedown. Ein Feuerzeug an Filmgeld reicht für die Metapher völlig — oder das Ganze KI-generieren (empfohlen, dann brennt real gar nichts).
+- **Filmgeld statt echtem Geld, fiktive Scheine statt CHF/EUR:** Echte Banknoten zu verbrennen ist je nach Land strafbar bzw. heikel, und realistische Banknoten in Video-Generatoren triggern Falschgeld-Filter. „Generic fictional prop banknotes" lösen beides.
+- Die Frau spricht nicht ins Feuer hinein — der Deadpan-Blick IST der Witz (gleiches Prinzip wie das ausdruckslose Baby-Oktopus-Gesicht: Absurdität + Ruhe).
+
+**Seedance-Prompt für die beiden Live-Action-Teile (Shots 1+4, Screen-Teil kommt aus der echten App):**
+
+```
+Vertical 9:16, 10 seconds, 24fps, photorealistic amateur iPhone footage,
+natural handheld micro-shake, true-to-life colors, modern bright startup
+office background with blurred desks and plants.
+
+STRICT RULES: the woman's face stays clearly visible in every frame; the
+money bundle never covers her face; fire stays small and contained at the
+bundle only; no gasoline, no large flames, no smoke filling the room; the
+banknotes are FICTIONAL generic prop bills in muted teal-grey with abstract
+patterns — not any real currency.
+
+Shot 1 (0-7s): A woman around 30, business-casual blazer, calmly walks down
+the office aisle straight toward the static camera holding a thick bundle of
+fictional prop banknotes chest-high. She stops at medium close-up distance,
+raises a small silver lighter, flicks it and holds the small flame to the
+corner of the bundle. The corner catches a small contained flame. She looks
+straight into the lens with a completely deadpan, unbothered expression while
+the corner burns. No smile, no reaction.
+
+Shot 2 (7-10s): HARD CUT, same framing, same office: the same woman holds the
+same bundle fully intact and undamaged up next to her face, gives one slow
+confident nod into the camera, and drops the lighter into a wastebasket
+beside her. Calm, satisfied, loopable ending.
+
+Audio: quiet office room tone, one soft lighter flick at the ignition moment,
+subtle paper crackle. No music, no speech, no text, no logos, no watermark.
+```
+
+
 
 1. **Score-Animation = Emotions-Moment.** Der hochzählende Prozent-Score mit Verdict-Farbe (grün „Winner" / rot „Flop") ist unser stärkstes visuelles Asset — in JEDEM Video mindestens einmal gross im Bild.
 2. **Gesicht optional, Screen Pflicht.** Mit Gesicht (Talking Head + Screen-Einblendung) baut schneller Vertrauen auf; faceless (nur Screen + Voiceover) skaliert leichter auf 2 Videos/Tag. Beide testen.
